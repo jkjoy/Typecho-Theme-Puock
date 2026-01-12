@@ -92,7 +92,7 @@ echo parse_shortcodes($content, $this);
 <?php endforeach; ?>
 </div>
 <div> 
-    <span class="c-sub"><i class="fa-regular fa-clock"></i> <?php $this->date(); ?></span>
+<span class="c-sub"><i class="fa-regular fa-clock"></i> <?php $this->date(); ?></span>
 </div>
 </div>
 </div>
@@ -132,10 +132,10 @@ echo parse_shortcodes($content, $this);
 <!--内页中-->
 </div>
 <?php if ($this->options->articlemid): ?>
-    <!--文章中广告-->
-    <div class="puock-text p-block t-md ad-page-content-bottom"><?php $this->options->articlemid(); ?></div>
+<!--文章中广告-->
+<div class="puock-text p-block t-md ad-page-content-bottom"><?php $this->options->articlemid(); ?></div>
 <?php endif;$this->related(4)->to($relatedPosts); if ($relatedPosts->have()):?>
-    <!--相关文章-->
+<!--相关文章-->
     <div class="p-block pb-0">
         <div class="row puock-text post-relevant"> 
             <?php while ($relatedPosts->next()): ?> 
@@ -217,7 +217,7 @@ echo parse_shortcodes($content, $this);
 </div>
 <!--评论上方--> 
 <?php $this->need('comments.php');if ($this->options->articlefoot): ?>
-    <!--文章底部广告-->
+<!--文章底部广告-->
 <div class="puock-text p-block t-md ad-comment-top"><?php $this->options->articlefoot(); ?></div> 
 <?php endif; ?>
 </div>

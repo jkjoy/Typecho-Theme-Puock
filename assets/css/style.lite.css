@@ -14262,6 +14262,23 @@ fieldset:disabled .btn {
 .fa-mastodon:before {
   content: "\f4f6";
 }
+.fa-twitter:before {
+  content: "\f099";
+}
+.fa-square-twitter:before,
+.fa-twitter-square:before {
+  content: "\f081";
+}
+.fa-facebook-f:before {
+  content: "\f39e";
+}
+.fa-facebook:before {
+  content: "\f09a";
+}
+.fa-facebook-square:before,
+.fa-square-facebook:before {
+  content: "\f082";
+}
 @font-face {
   font-family: "Font Awesome 6 Free";
   font-style: normal;
