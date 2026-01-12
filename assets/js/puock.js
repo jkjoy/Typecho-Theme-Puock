@@ -79,6 +79,11 @@ class Puock {
         this.eventPostMainBoxResize()
         this.swiperOnceEvent()
         this.initModalToggle()
+        this.loginInit()
+        this.smileyModalInit()
+        this.posterInit()
+        this.rewardInit()
+        this.shareModalInit()
         this.detectDevice()
         window.addEventListener('resize', ()=>this.detectDevice());
         layer.config({shade: 0.5})
@@ -227,31 +232,64 @@ class Puock {
             }
             return false;
         })
-        // 登录弹窗表单AJAX提交（集成Puock插件接口）
-        $(document).off('submit', '#front-login-form');
-        $(document).on('submit', '#front-login-form', function(e) {
-            e.preventDefault();
-            var $form = $(this);
-            var data = $form.serialize();
-            $.ajax({
-                url: '/index.php/ajaxlogin/',
-                type: 'POST',
-                data: data,
-                dataType: 'json',
-                success: function(res) {
-                    if (res.success) {
-                        window.Puock.toast(res.msg || '登录成功', TYPE_SUCCESS);
-                        setTimeout(function() {
-                            window.location.reload();
-                        }, 800);
-                    } else {
-                        window.Puock.toast(res.msg || '登录失败', TYPE_DANGER);
-                    }
-                },
-                error: function() {
-                    window.Puock.toast('请求失败', TYPE_DANGER);
-                }
-            });
+    }
+
+    loginInit() {
+        $(document).off("click", ".pk-login-open");
+        $(document).on("click", ".pk-login-open", (e) => {
+            if (e && e.preventDefault && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                e.preventDefault();
+            }
+            if (e && e.stopImmediatePropagation) e.stopImmediatePropagation();
+            if (e && e.stopPropagation) e.stopPropagation();
+            const tpl = document.getElementById("pk-login-template");
+            if (!tpl) {
+                this.toast("登录组件未加载", TYPE_WARNING);
+                return;
+            }
+            const html = (tpl.innerHTML || "").trim();
+            if (!html) {
+                this.toast("登录组件未加载", TYPE_WARNING);
+                return;
+            }
+            const url = (window.location.href || "").split("#")[0];
+            const dataId = (typeof window.SparkMD5 !== "undefined" && window.SparkMD5.hash) ? window.SparkMD5.hash("login|" + url) : String(Date.now());
+            this.modalLoadRender(dataId, html, "登入", false, false);
+
+            const modalRoot = document.getElementById("pk-modal-" + dataId);
+            if (!modalRoot) return;
+            const refererEl = modalRoot.querySelector("input[name='referer']");
+            if (refererEl) refererEl.value = url;
+            const nameEl = modalRoot.querySelector("#_front_login_username");
+            if (nameEl && nameEl.focus) nameEl.focus();
+        });
+
+        $(document).off("keydown", ".pk-login-open");
+        $(document).on("keydown", ".pk-login-open", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                $(e.currentTarget).trigger("click");
+            }
+        });
+    }
+
+    smileyModalInit() {
+        $(document).off("click", ".pk-smiley-open");
+        $(document).on("click", ".pk-smiley-open", (e) => {
+            if (e && e.preventDefault) e.preventDefault();
+            const tpl = document.getElementById("pk-smiley-template");
+            if (!tpl) {
+                this.toast("表情组件未加载", TYPE_WARNING);
+                return;
+            }
+            const html = (tpl.innerHTML || "").trim();
+            if (!html) {
+                this.toast("表情组件未加载", TYPE_WARNING);
+                return;
+            }
+            const url = (window.location.href || "").split("#")[0];
+            const dataId = (typeof window.SparkMD5 !== "undefined" && window.SparkMD5.hash) ? window.SparkMD5.hash("smiley|" + url) : String(Date.now());
+            this.modalLoadRender(dataId, html, "表情", false, false);
         });
     }
 
@@ -343,6 +381,295 @@ class Puock {
                     break;
             }
             if (to) window.open(to, '_blank');
+        });
+    }
+
+    posterInit() {
+        $(document).off("click", ".post-poster-open");
+        $(document).on("click", ".post-poster-open", async (e) => {
+            const trigger = $(this.ct(e));
+            const title = (trigger.data("poster-title") || $("#post-title").text() || document.title || "").toString().trim();
+            const excerpt = (trigger.data("poster-excerpt") || "").toString().trim();
+            const coverRaw = (trigger.data("poster-cover") || "").toString().trim();
+            const coverDefault = (trigger.data("poster-cover-default") || "").toString().trim();
+            const cover = coverRaw || coverDefault;
+            const logo = (trigger.data("poster-logo") || "").toString().trim();
+            const url = (window.location.href || "").split("#")[0];
+
+            const dataId = (typeof window.SparkMD5 !== "undefined" && window.SparkMD5.hash) ? window.SparkMD5.hash("poster|" + url + "|" + title) : String(Date.now());
+            const posterUid = "pk-poster-" + dataId;
+            const qrUid = "pk-poster-qr-" + dataId;
+            const logoHtml = logo ? `<img class="logo" crossorigin="anonymous" src="${logo}" alt="logo">` : "";
+
+            const html = `
+<div class="post-poster">
+  <div class="post-poster-main" id="${posterUid}">
+    <div class="cover">
+      <img crossorigin="anonymous" src="${cover || ""}" alt="poster">
+    </div>
+    <div class="content">
+      <p class="title mt20 fs16"></p>
+      <p class="excerpt text-3line fs14 mt20 c-sub"></p>
+      <div class="info mt20">
+        <div class="qrcode" id="${qrUid}"></div>
+        ${logoHtml}
+      </div>
+      <p class="tip c-sub fs12 mt20 p-flex-center"><i class="fas fa-qrcode"></i>&nbsp;长按识别二维码查看文章内容</p>
+    </div>
+  </div>
+</div>
+            `.trim();
+
+            this.modalLoadRender(dataId, html, "海报", false, false);
+            const modalRoot = $("#pk-modal-" + dataId);
+            modalRoot.find("#" + posterUid + " .title").text(title);
+            if (excerpt) {
+                modalRoot.find("#" + posterUid + " .excerpt").text(excerpt);
+            } else {
+                modalRoot.find("#" + posterUid + " .excerpt").addClass("d-none");
+            }
+
+            try {
+                await this.ensureQRCodeReady(5000);
+                const qrEl = document.getElementById(qrUid);
+                if (qrEl) {
+                    qrEl.innerHTML = "";
+                    // eslint-disable-next-line no-undef
+                    new QRCode(qrEl, {
+                        text: url,
+                        width: 120,
+                        height: 120,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: (typeof QRCode !== "undefined" && QRCode.CorrectLevel) ? QRCode.CorrectLevel.M : undefined,
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                this.toast("二维码组件未加载", TYPE_WARNING);
+            }
+
+            const loading = this.startLoading();
+            try {
+                const node = document.getElementById(posterUid);
+                if (!node || typeof window.html2canvas === "undefined") {
+                    this.toast("html2canvas 未加载", TYPE_DANGER);
+                    return;
+                }
+                await this.waitImagesLoaded(node, 3500);
+                const canvas = await window.html2canvas(node, {
+                    allowTaint: true,
+                    useCORS: true,
+                    backgroundColor: "#ffffff",
+                });
+                const dataUrl = canvas.toDataURL("image/png");
+                $("#" + posterUid).html(`<img class="result" src="${dataUrl}" alt="poster">`);
+            } catch (err) {
+                console.error(err);
+                this.toast("生成海报失败，请到Console查看错误信息", TYPE_DANGER);
+            } finally {
+                this.stopLoading(loading);
+            }
+        });
+
+        $(document).off("keydown", ".post-poster-open");
+        $(document).on("keydown", ".post-poster-open", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                $(e.currentTarget).trigger("click");
+            }
+        });
+    }
+
+    rewardInit() {
+        $(document).off("click", ".reward-modal-open");
+        $(document).on("click", ".reward-modal-open", () => {
+            const tpl = document.getElementById("pk-reward-template");
+            if (!tpl) {
+                this.toast("请在主题设置中填写赞赏二维码地址", TYPE_WARNING);
+                return;
+            }
+            const html = tpl.innerHTML || "";
+            if (!html.trim()) {
+                this.toast("请在主题设置中填写赞赏二维码地址", TYPE_WARNING);
+                return;
+            }
+            const url = (window.location.href || "").split("#")[0];
+            const dataId = (typeof window.SparkMD5 !== "undefined" && window.SparkMD5.hash) ? window.SparkMD5.hash("reward|" + url) : String(Date.now());
+            this.modalLoadRender(dataId, html, "赞赏", false, false);
+        });
+
+        $(document).off("keydown", ".reward-modal-open");
+        $(document).on("keydown", ".reward-modal-open", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                $(e.currentTarget).trigger("click");
+            }
+        });
+    }
+
+    shareModalInit() {
+        $(document).off("click", ".share-modal-open");
+        $(document).on("click", ".share-modal-open", async () => {
+            const url = (window.location.href || "").split("#")[0];
+            const title = ($("#post-title").text() || document.title || "").toString().trim();
+            const dataId = (typeof window.SparkMD5 !== "undefined" && window.SparkMD5.hash) ? window.SparkMD5.hash("share|" + url) : String(Date.now());
+            const qrUid = "pk-share-qr-" + dataId;
+            const qrBoxUid = "pk-share-qrbox-" + dataId;
+            const copyUid = "pk-share-copy-" + dataId;
+            const wxUid = "pk-share-wx-" + dataId;
+
+            const html = `
+<div class="d-flex justify-content-center w-100">
+  <div data-id="wb" class="share-to circle-button circle-sm circle-hb text-center bg-danger text-light" title="微博">
+    <i class="fa-brands fa-weibo t-md"></i>
+  </div>
+  <div id="${wxUid}" class="circle-button circle-sm circle-hb text-center bg-success text-light" title="微信" role="button" tabindex="0" aria-label="微信二维码">
+    <i class="fa-brands fa-weixin t-md"></i>
+  </div>
+  <div data-id="qzone" class="share-to circle-button circle-sm circle-hb text-center bg-warning text-light" title="QQ空间">
+    <i class="fa-brands fa-qq t-md"></i>
+  </div>
+  <div data-id="tw" class="share-to circle-button circle-sm circle-hb text-center bg-info text-light" title="Twitter">
+    <i class="fa-brands fa-twitter t-md"></i>
+  </div>
+  <div data-id="fb" class="share-to circle-button circle-sm circle-hb text-center bg-primary text-light" title="Facebook">
+    <i class="fa-brands fa-facebook t-md"></i>
+  </div>
+  <div id="${copyUid}" class="circle-button circle-sm circle-hb text-center bg-dark text-light" title="复制链接">
+    <i class="fa-regular fa-copy t-md"></i>
+  </div>
+</div>
+<div id="${qrBoxUid}" class="text-center mt15 d-none">
+  <p class="text-center t-sm mb-1 mt-1">使用微信扫一扫</p>
+  <div class="d-flex justify-content-center">
+    <div id="${qrUid}"></div>
+  </div>
+  <div class="c-sub fs12 mt5">长按识别二维码阅读</div>
+</div>
+            `.trim();
+
+            this.modalLoadRender(dataId, html, "分享", false, false);
+
+            const renderWxQr = async () => {
+                try {
+                    await this.ensureQRCodeReady(5000);
+                    const qrEl = document.getElementById(qrUid);
+                    if (qrEl) {
+                        qrEl.innerHTML = "";
+                        // eslint-disable-next-line no-undef
+                        new QRCode(qrEl, {
+                            text: url,
+                            width: 120,
+                            height: 120,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: (typeof QRCode !== "undefined" && QRCode.CorrectLevel) ? QRCode.CorrectLevel.M : undefined,
+                        });
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.toast("二维码组件未加载", TYPE_WARNING);
+                }
+            };
+
+            const wxEl = document.getElementById(wxUid);
+            const qrBoxEl = document.getElementById(qrBoxUid);
+            if (wxEl && qrBoxEl) {
+                wxEl.onclick = async () => {
+                    const isHidden = qrBoxEl.classList.contains("d-none");
+                    if (isHidden) {
+                        qrBoxEl.classList.remove("d-none");
+                        if (!qrBoxEl.dataset.rendered) {
+                            await renderWxQr();
+                            qrBoxEl.dataset.rendered = "1";
+                        }
+                        return;
+                    }
+                    qrBoxEl.classList.add("d-none");
+                };
+                wxEl.onkeydown = (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        wxEl.click();
+                    }
+                };
+            }
+
+            const copyEl = document.getElementById(copyUid);
+            if (copyEl) {
+                copyEl.onclick = async () => {
+                    try {
+                        await this.copyToClipboard(url);
+                        this.toast("复制链接成功", TYPE_SUCCESS);
+                    } catch (err) {
+                        console.error(err);
+                        this.toast("复制失败", TYPE_DANGER);
+                    }
+                };
+            }
+        });
+
+        $(document).off("keydown", ".share-modal-open");
+        $(document).on("keydown", ".share-modal-open", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                $(e.currentTarget).trigger("click");
+            }
+        });
+    }
+
+    copyToClipboard(text) {
+        const val = (text ?? "").toString();
+        if (val === "") return Promise.reject(new Error("empty text"));
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(val);
+        }
+        return new Promise((resolve, reject) => {
+            try {
+                const textarea = document.createElement("textarea");
+                textarea.value = val;
+                textarea.setAttribute("readonly", "readonly");
+                textarea.style.position = "fixed";
+                textarea.style.top = "-9999px";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                const ok = document.execCommand("copy");
+                document.body.removeChild(textarea);
+                ok ? resolve() : reject(new Error("execCommand failed"));
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
+    ensureQRCodeReady(timeoutMs = 5000) {
+        if (typeof window.QRCode !== "undefined") return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            const start = Date.now();
+            const tick = () => {
+                if (typeof window.QRCode !== "undefined") return resolve();
+                if (Date.now() - start > timeoutMs) return reject(new Error("QRCode load timeout"));
+                setTimeout(tick, 50);
+            };
+            tick();
+        });
+    }
+
+    waitImagesLoaded(rootEl, timeoutMs = 3500) {
+        const imgs = Array.from(rootEl.querySelectorAll("img")).filter(img => !!img.src);
+        if (imgs.length === 0) return Promise.resolve();
+        const start = Date.now();
+        return new Promise((resolve) => {
+            const done = () => resolve();
+            const check = () => {
+                const allDone = imgs.every(img => img.complete);
+                if (allDone) return done();
+                if (Date.now() - start > timeoutMs) return done();
+                setTimeout(check, 80);
+            };
+            check();
         });
     }
 

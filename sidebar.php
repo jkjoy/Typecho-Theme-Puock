@@ -59,7 +59,8 @@
                 <?php \Widget\Contents\Post\Recent::alloc() ->parse('<div class="media-link mt20"><h2 class="t-lg t-line-1" title="{title}"><i class="fa fa-angle-right t-sm c-sub mr-1"></i> <a class="a-link t-w-400 t-md" title="{title}" href="{permalink}">{title}</a> </h2></div>'); ?>   
             </div>
         </div>
-    <?php endif;if (!empty($this->options->sidebarBlock) && in_array('ShowHotPosts', $this->options->sidebarBlock)):
+    <?php endif;
+    if (!empty($this->options->sidebarBlock) && in_array('ShowHotPosts', $this->options->sidebarBlock)):
     $hotPostsLimit = (int)($this->options->sidebarHotPostsLimit ?? 0);
     if ($hotPostsLimit <= 0) {
         $hotPostsLimit = 5;
@@ -158,10 +159,11 @@
                 </div>
             </div>
         </div>
-    <?php endif;if (!empty($this->options->sidebarBlock) && in_array('ShowTags', $this->options->sidebarBlock)):
+    <?php endif;
+    if (!empty($this->options->sidebarBlock) && in_array('ShowTags', $this->options->sidebarBlock)):
     $tagsLimit = (int)($this->options->sidebarTagsLimit ?? 0);
     if ($tagsLimit <= 0) {
-        $tagsLimit = 5;
+        $tagsLimit = 50;
     }
     $tags = \Widget\Metas\Tag\Cloud::alloc('sort=count&desc=1&limit=' . $tagsLimit);
     if ($tags->have()):

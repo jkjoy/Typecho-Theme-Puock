@@ -1,5 +1,15 @@
-<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
-<?php $this->need('header.php'); ?>
+<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; 
+$this->need('header.php'); 
+// 计算字数使用纯文本，不影响实际渲染内容
+$plainContent = strip_tags($this->content);
+$wordCount = mb_strlen($plainContent, 'UTF-8');
+$pkPosterExcerptSource = trim((string)preg_replace('/\\s+/u', ' ', $plainContent));
+$pkPosterExcerpt = $pkPosterExcerptSource;
+if (mb_strlen($pkPosterExcerpt, 'UTF-8') > 60) {
+	$pkPosterExcerpt = mb_substr($pkPosterExcerpt, 0, 60, 'UTF-8') . '...';
+}
+$pkLogoUrl = trim((string)($this->options->logoUrl ?? ''));
+?>
 <div id="breadcrumb" class="animated fadeInUp">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -48,11 +58,6 @@
     <i class="fa fa-up-right-and-down-left-from-center"></i>
 </div>
 </div>
-<?php
-// 计算字数使用纯文本，不影响实际渲染内容
-$plainContent = strip_tags($this->content);
-$wordCount = mb_strlen($plainContent, 'UTF-8');
-?>
 <div class="mt20 entry-content-box">
 <div class="entry-content show-link-icon content-main puock-text ">
 <p class="fs12 c-sub no-indent"> <i class="fa-regular fa-clock"></i> &nbsp;本文共计<?php echo $wordCount; ?>字，预计需要花费 <?php echo ceil($wordCount / 800); ?>分钟才能阅读完成。 </p>
@@ -67,13 +72,19 @@ if($days > 180){
 ?>
 </p>
 <?php
-// 手动解析短代码以兼容 Typecho 1.3.0
-// 获取文章内容
-ob_start();
-$this->content();
-$content = ob_get_clean();
-echo parse_shortcodes($content, $this);
-?>
+	// 手动解析短代码以兼容 Typecho 1.3.0
+	// 获取文章内容
+	ob_start();
+	$this->content();
+	$content = ob_get_clean();
+	$pkPosterCover = getPostCover($content, $this->cid, $this->fields ?? null);
+	ob_start();
+	$this->title();
+	$pkPosterTitle = trim(ob_get_clean());
+	$pkRewardAlipay = trim((string)($this->options->rewardAlipayQrUrl ?? ''));
+	$pkRewardWx = trim((string)($this->options->rewardWxQrUrl ?? ''));
+	echo parse_shortcodes($content, $this);
+	?>
 </div>
 <div class="t-separator c-sub t-sm mt30">正文完</div>
 <div class="footer-info puock-text mt20">
@@ -98,29 +109,48 @@ echo parse_shortcodes($content, $this);
 </div>
 </div>
 <!-- 分享海报点赞打赏 -->
-<div class="mt15 post-action-panel">
-    <div class="post-action-content">
-        <div class="d-flex justify-content-center w-100 c-sub">
-            <div class="circle-button puock-bg text-center " id="post-like" data-id="<?php echo $this->cid; ?>"> 
-                <i class="fa-regular fa-thumbs-up t-md"></i>&nbsp;<span class="t-sm"><?php get_post_like($this) ?></span>
-            </div>
-            <?php if ($this->options->social): ?>
-            <div class="circle-button puock-bg text-center pk-modal-toggle" title="海报"
-                data-no-title data-no-padding data-once-load="true"
-                data-url="<?php echo get_correct_url('/poster/' . $this->cid); ?>">
-                <i class="fa-regular fa-images"></i>
-            </div>
-            <div class="circle-button puock-bg text-center pk-modal-toggle" title="赞赏"
-                data-once-load="true"
-                data-url="<?php echo get_correct_url('/reward/'); ?>">
-                <i class="fa fa-sack-dollar"></i>
-            </div>
-            <div class="circle-button puock-bg text-center pk-modal-toggle" title="分享"
-                data-once-load="true"
-                data-url="<?php echo get_correct_url('/share/' . $this->cid); ?>">
-                <i class="fa fa-share-from-square t-md"></i>
-            </div>
-            <?php endif; ?>
+	<div class="mt15 post-action-panel">
+	    <div class="post-action-content">
+		        <div class="d-flex justify-content-center w-100 c-sub">
+		            <div class="circle-button puock-bg text-center " id="post-like" data-id="<?php echo $this->cid; ?>"> 
+		                <i class="fa-regular fa-thumbs-up t-md"></i>&nbsp;<span class="t-sm"><?php get_post_like($this) ?></span>
+		            </div>
+			            <?php if ($pkRewardAlipay || $pkRewardWx): ?>
+			            <div class="circle-button puock-bg text-center reward-modal-open" title="赞赏" aria-label="赞赏" role="button" tabindex="0">
+			                <i class="fa fa-sack-dollar"></i>
+			            </div>
+			            <template id="pk-reward-template">
+			                <div class="p-flex-sbc">
+			                    <?php if ($pkRewardAlipay): ?>
+			                    <div class="mr10" id="reward-alipay">
+			                        <img src="<?php echo htmlspecialchars($pkRewardAlipay); ?>" style="width: 140px" alt="支付宝赞赏" title="支付宝赞赏" data-bs-toggle="tooltip" loading="lazy"/>
+			                        <p class="mt10 text-center fs12">请使用支付宝扫一扫</p>
+			                    </div>
+			                    <?php endif;if ($pkRewardWx): ?>
+			                    <div id="reward-wx">
+			                        <img src="<?php echo htmlspecialchars($pkRewardWx); ?>" style="width: 140px" alt="微信赞赏" title="微信赞赏" data-bs-toggle="tooltip" loading="lazy"/>
+			                        <p class="mt10 text-center fs12">请使用微信扫一扫</p>
+			                    </div>
+			                    <?php endif; ?>
+			                </div>
+			            </template>
+			            <?php endif; ?>
+			    <div class="circle-button puock-bg text-center post-poster-open"
+			                role="button"
+			                tabindex="0"
+			                title="海报"
+			                aria-label="海报"
+				                data-poster-title="<?php echo htmlspecialchars($pkPosterTitle); ?>"
+				                data-poster-excerpt="<?php echo htmlspecialchars($pkPosterExcerpt); ?>"
+				                data-poster-cover="<?php echo htmlspecialchars($pkPosterCover); ?>"
+				                data-poster-cover-default="<?php $this->options->themeUrl('assets/img/cover.png'); ?>"
+				                data-poster-logo="<?php echo htmlspecialchars($pkLogoUrl); ?>"
+				            >
+				<i class="fa-regular fa-images"></i>
+				</div>
+			    <div class="circle-button puock-bg text-center share-modal-open" title="分享" aria-label="分享" role="button" tabindex="0">
+			    <i class="fa fa-share-from-square t-md"></i>
+		    </div>
             <div class="ls">
                 <div class="circle-button puock-bg text-center post-menu-toggle post-menus-box">
                     <i class="fa fa-bars t-md"></i>

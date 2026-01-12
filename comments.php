@@ -40,24 +40,23 @@
                 <?php endif; ?>
 
                 <div class="p-flex-sbc mt10">
+	                    <div>
+	                        <?php if(!$this->user->hasLogin()): ?>
+	                        <div class="d-inline-block">
+	                            <a data-no-instant class="btn btn-primary btn-ssm pk-login-open" href="<?php $this->options->loginUrl(); ?>" title="快捷登录" aria-label="快捷登录">
+	                                <i class="fa fa-right-to-bracket"></i>&nbsp;快捷登录
+	                            </a>
+	                        </div>
+	                        <?php endif; ?>
+	                    </div>
                     <div>
-                        <?php if(!$this->user->hasLogin()): ?>
-                        <div class="d-inline-block">
-                            <button class="btn btn-primary btn-ssm pk-modal-toggle" type="button" data-once-load="true" data-id="front-login" title="快捷登录" data-url="<?php echo get_correct_url('/login/'); ?>"> 
-                                <i class="fa fa-right-to-bracket"></i>&nbsp;快捷登录 
-                            </button>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                    <div>
-                        <?php if($this->is('post')): ?>
-                        <button id="comment-cancel" type="button" class="btn btn-outline-dark d-none btn-ssm">取消</button>
-                        <?php endif;if($this->options->social): ?>
-                        <button id="comment-smiley" class="btn btn-outline-secondary btn-ssm pk-modal-toggle" type="button" title="表情" data-once-load="true"
-                            data-url="<?php echo get_correct_url('/emoji/'); ?>">
-                            <i class="fa-regular fa-face-smile t-md"></i>
-                        </button>
-                        <?php endif; ?>
+	                        <?php if($this->is('post')): ?>
+	                        <button id="comment-cancel" type="button" class="btn btn-outline-dark d-none btn-ssm">取消</button>
+	                        <?php endif;if($this->options->social): ?>
+	                        <button id="comment-smiley" class="btn btn-outline-secondary btn-ssm pk-smiley-open" type="button" title="表情" aria-label="表情">
+	                            <i class="fa-regular fa-face-smile t-md"></i>
+	                        </button>
+	                        <?php endif; ?>
                         <input type="hidden" name="parent" id="comment_parent" value="">
                         <?php Typecho_Widget::widget('Widget_Security')->to($security); ?>
                         <input type="hidden" name="_" value="<?php echo $security->getToken($this->request->getRequestUrl()); ?>">
@@ -67,12 +66,62 @@
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-    <div id="comment-ajax-load" class="text-center mt20 d-none">
-        <div class="pk-skeleton _comment">
-            <div class="_h">
-                <div class="_avatar"></div>
+	        </div>
+	    </div>
+	    <?php if ($this->options->social): ?>
+	    <template id="pk-smiley-template">
+	        <?php
+	        $pkSmileys = [
+	            [':?:', 'doubt.png', '疑问', '疑问'],
+	            [':razz:', 'razz.png', '调皮', '调皮'],
+	            [':sad:', 'sad.png', '难过', '难过'],
+	            [':evil:', 'evil.png', '抠鼻', '抠鼻'],
+	            [':naughty:', 'naughty.png', '顽皮', '顽皮'],
+	            [':!:', 'scare.png', '吓', '吓'],
+	            [':smile:', 'smile.png', '微笑', '微笑'],
+	            [':oops:', 'oops.png', '憨笑', '憨笑'],
+	            [':neutral:', 'neutral.png', '亲亲', '亲亲'],
+	            [':cry:', 'cry.png', '大哭', '大哭'],
+	            [':mrgreen:', 'mrgreen.png', '呲牙', '呲牙'],
+	            [':grin:', 'grin.png', '坏笑', '坏笑'],
+	            [':eek:', 'eek.png', '惊讶', '惊讶'],
+	            [':shock:', 'shock.png', '发呆', '发呆'],
+	            [':???:', 'bz.png', '撇嘴', '撇嘴'],
+	            [':cool:', 'cool.png', '酷', '酷'],
+	            [':lol:', 'lol.png', '偷笑', '偷笑'],
+	            [':mad:', 'mad.png', '咒骂', '咒骂'],
+	            [':twisted:', 'twisted.png', '发怒', '发怒'],
+	            [':roll:', 'roll.png', '白眼', '白眼'],
+	            [':wink:', 'wink.png', '鼓掌', '鼓掌'],
+	            [':idea:', 'idea.png', '想法', '想法'],
+	            [':despise:', 'despise.png', '蔑视', '蔑视'],
+	            [':celebrate:', 'celebrate.png', '庆祝', '庆祝'],
+	            [':watermelon:', 'watermelon.png', '西瓜', '西瓜'],
+	            [':xmas:', 'xmas.png', '圣诞', '圣诞'],
+	            [':warn:', 'warn.png', '警告', '警告'],
+	            [':rainbow:', 'rainbow.png', '彩虹', '彩虹'],
+	            [':loveyou:', 'loveyou.png', '爱你', '爱你'],
+	            [':love:', 'love.png', '爱', '爱'],
+	            [':beer:', 'beer.png', '啤酒', '啤酒']
+	        ];
+	        ?>
+	        <div id="smiley" class="animate bounce" style="max-width: 290px">
+	            <?php foreach ($pkSmileys as $smiley): ?>
+	                <div class="smiley-item">
+	                    <img data-id="<?php echo $smiley[0]; ?>"
+	                         src="<?php $this->options->themeUrl('assets/img/smiley/' . $smiley[1]); ?>"
+	                         class="smiley-img"
+	                         alt="<?php echo $smiley[0] . '-' . $smiley[2]; ?>"
+	                         title="<?php echo $smiley[3]; ?>"/>
+	                </div>
+	            <?php endforeach; ?>
+	        </div>
+	    </template>
+	    <?php endif; ?>
+	    <div id="comment-ajax-load" class="text-center mt20 d-none">
+	        <div class="pk-skeleton _comment">
+	            <div class="_h">
+	                <div class="_avatar"></div>
                 <div class="_info">
                     <div class="_name"></div>
                     <div class="_date"></div>

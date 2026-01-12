@@ -27,12 +27,24 @@ function themeConfig($form)
     array('0'=> _t('关闭'), '1'=> _t('开启')),
     '0', _t('首页友情链接'), _t('选择"开启"在首页显示友情链接。默认关闭,开启前请先安装插件'));
     $form->addInput($friendlink);
-    $social = new Typecho_Widget_Helper_Form_Element_Radio('social',
-    array('0'=> _t('关闭'), '1'=> _t('开启')),
-    '0', _t('社交分享显示'), _t('选择"开启"在文章页面显示社交分享。默认关闭,开启前请先安装插件'));
-    $form->addInput($social);
     $gonggao = new Typecho_Widget_Helper_Form_Element_Textarea('gonggao', NULL, NULL, _t('站点公告'), _t('<b style=color:red>使用格式: </b><b>标题|链接|图标</b><br>多条公告回车分隔.链接和图标可以为空.图标使用Font Awesome,如: fa-regular fa-bell'));
     $form->addInput($gonggao);
+    $rewardAlipayQrUrl = new Typecho_Widget_Helper_Form_Element_Text(
+        'rewardAlipayQrUrl',
+        NULL,
+        NULL,
+        _t('<span class="themeConfig"><h3>赞赏设置</h3></span><div class="themeConfiginfo">用于文章页赞赏弹窗</div>支付宝赞赏二维码'),
+        _t('填写二维码图片地址（不填则不显示）')
+    );
+    $form->addInput($rewardAlipayQrUrl);
+    $rewardWxQrUrl = new Typecho_Widget_Helper_Form_Element_Text(
+        'rewardWxQrUrl',
+        NULL,
+        NULL,
+        _t('微信赞赏二维码'),
+        _t('填写二维码图片地址（不填则不显示）')
+    );
+    $form->addInput($rewardWxQrUrl);
     $adlisttop = new Typecho_Widget_Helper_Form_Element_Textarea('adlisttop', NULL, NULL, _t('<span class="themeConfig"><h3>广告管理</h3></span><div class="themeConfiginfo">广告位设置</div>文章列表上方广告位'), _t('支持HTML'));
     $form->addInput($adlisttop);
     $adlistfoot = new Typecho_Widget_Helper_Form_Element_Textarea('adlistfoot', NULL, NULL, _t('文章列表下方广告位'), _t('支持HTML'));
@@ -64,7 +76,6 @@ function themeConfig($form)
     $form->addInput($showsidebar);
     $bgUrl = new Typecho_Widget_Helper_Form_Element_Text('bgUrl', NULL, NULL, _t('自定义背景图片地址'), _t('用于侧边栏个人信息展示的背景图片'));
     $form->addInput($bgUrl);
-
     $sidebarHotPostsLimit = new Typecho_Widget_Helper_Form_Element_Text(
         'sidebarHotPostsLimit',
         NULL,
@@ -73,7 +84,6 @@ function themeConfig($form)
         _t('不填写则默认显示 5 条')
     );
     $form->addInput($sidebarHotPostsLimit);
-
     $sidebarTagsLimit = new Typecho_Widget_Helper_Form_Element_Text(
         'sidebarTagsLimit',
         NULL,
@@ -100,7 +110,6 @@ function themeConfig($form)
         render_theme_backup_section();
     }
 }
-
 
 function themeFields($layout) {
     $summary= new Typecho_Widget_Helper_Form_Element_Textarea('summary', NULL, NULL, _t('文章摘要'), _t('自定义摘要'));

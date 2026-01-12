@@ -95,10 +95,40 @@
     </script>
     <script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/libs.min.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-libs-js"></script>
     <script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/layer/layer.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-layer-js"></script>
-    <script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/spark-md5.min.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-spark-md5-js"></script>
-    <script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/html2canvas.min.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-html2canvas-js"></script>
-    <script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/gt4.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-gt4-js"></script>
-    <script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/puock.js'); ?>?t=<?php echo get_theme_version(); ?>" id="puock-js"></script>
-    <?php $this->footer(); ?>
-</body>
-</html>
+	<script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/spark-md5.min.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-spark-md5-js"></script>
+	<script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/html2canvas.min.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-html2canvas-js"></script>
+	<script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/qrcode.min.js'); ?>?t=<?php echo get_theme_version(); ?>" id="puock-qrcode-js"></script>
+	<script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/puock.js'); ?>?t=<?php echo get_theme_version(); ?>" id="puock-js"></script>
+	    <?php
+	    $pkNoticeRaw = \Typecho\Cookie::get('__typecho_notice');
+	    $pkNoticeType = \Typecho\Cookie::get('__typecho_notice_type') ?: 'notice';
+	    $pkNotices = [];
+	    if (!empty($pkNoticeRaw)) {
+	        $decoded = json_decode($pkNoticeRaw, true);
+	        if (is_array($decoded)) {
+	            $pkNotices = array_values(array_filter(array_map('strval', $decoded)));
+	        } elseif (is_string($pkNoticeRaw)) {
+	            $pkNotices = [trim($pkNoticeRaw)];
+	        }
+	        \Typecho\Cookie::delete('__typecho_notice');
+	        \Typecho\Cookie::delete('__typecho_notice_type');
+	        \Typecho\Cookie::delete('__typecho_notice_highlight');
+	    }
+	    ?>
+	    <?php if (!empty($pkNotices)): ?>
+	    <script data-no-instant>
+	        jQuery(function () {
+	            var msgs = <?php echo json_encode($pkNotices, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	            var type = <?php echo json_encode($pkNoticeType, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	            var toastType = (type === 'success') ? TYPE_SUCCESS : (type === 'error') ? TYPE_DANGER : (type === 'warning') ? TYPE_WARNING : TYPE_INFO;
+	            if (window.Puock && typeof window.Puock.toast === 'function') {
+	                msgs.forEach(function (m) {
+	                    if (m) window.Puock.toast(String(m), toastType);
+	                });
+	            }
+	        });
+	    </script>
+	    <?php endif; ?>
+	    <?php $this->footer(); ?>
+	</body>
+	</html>
