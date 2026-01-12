@@ -77,16 +77,13 @@
     <?php if ($this->options->icoUrl): ?>
     <link rel="icon" href="<?php $this->options->icoUrl() ?>" sizes="32x32" />
     <link rel="apple-touch-icon" href="<?php $this->options->icoUrl() ?>" />
-    <?php endif; ?>
-    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.lite.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
-    <?php if ($this->is('post') || $this->is('page')): ?>
-        <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/highlight.css'); ?>?ver=<?php echo get_theme_version(); ?>" media="print" onload="this.media='all'">
-        <noscript><link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/highlight.css'); ?>?ver=<?php echo get_theme_version(); ?>"></noscript>
-    <?php endif; ?>
-    <script src='<?php $this->options->themeUrl('assets/js/jquery.min.js'); ?>?ver=<?php echo get_theme_version(); ?>' type="text/javascript"></script>
-    <!-- 通过自有函数输出HTML头部信息 -->
-    <?php $this->header(); ?>
-    <style id="puock-comment-indent-cap">
+	    <?php endif; ?>
+	    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.lite.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
+	    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/highlight.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
+	    <script src='<?php $this->options->themeUrl('assets/js/jquery.min.js'); ?>?ver=<?php echo get_theme_version(); ?>' type="text/javascript"></script>
+	    <!-- 通过自有函数输出HTML头部信息 -->
+	    <?php $this->header(); ?>
+	    <style id="puock-comment-indent-cap">
         @media (max-width: 767px) {
             #post-comments .comment-list .children{padding-left:30px!important}
             #post-comments .comment-list .children .children{padding-left:30px!important}
