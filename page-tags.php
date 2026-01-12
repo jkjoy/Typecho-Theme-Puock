@@ -56,9 +56,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
                             <li class='a'><a href='#<?php echo $letter; ?>'><?php echo $letter; ?></a></li>
                         <?php else: ?>
                             <li class='t'><?php echo $letter; ?></li>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                    <?php for ($i = 1; $i <= 9; $i++): ?>
+                        <?php endif;endforeach;for ($i = 1; $i <= 9; $i++): ?>
                         <li class='t'><?php echo $i; ?></li>
                     <?php endfor; ?>
                 </ul>
@@ -78,7 +76,4 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
                 </ul>
             </div>
         </div> 
-<?php if ($this->options->showsidebar): ?>    
-<?php $this->need('sidebar.php'); ?>
-<?php endif; ?>
-<?php $this->need('footer.php'); ?>
+<?php if ($this->options->showsidebar):$this->need('sidebar.php'); endif;$this->need('footer.php'); ?>

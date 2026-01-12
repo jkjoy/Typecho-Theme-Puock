@@ -23,7 +23,7 @@
         <?php if (!empty($this->options->sidebarBlock) && in_array('ShowAdmin', $this->options->sidebarBlock)): ?>
         <div class="widget-puock-author widget">
             <div class="header" style="background-image: url('<?php echo !empty($this->options->bgUrl) ? $this->options->bgUrl : $this->options->themeUrl('assets/img/cover.png'); ?>')">
-                <img src='<?php $this->options->themeUrl('assets/img/load.svg'); ?>' class='lazy avatar' data-src='<?php echo $stats['avatar']; ?>' >
+                <img src='<?php $this->options->themeUrl('assets/img/load.svg'); ?>' class='lazy avatar' data-src='<?php echo $stats['avatar']; ?>' alt='<?php echo $stats['nickname']; ?>' title='<?php echo $stats['nickname']; ?>' />
             </div>
             <div class="content t-md puock-text">
                 <div class="text-center p-2">
@@ -61,23 +61,12 @@
                 </span>
             </div>
             <div class="mt20">
-                <?php \Widget\Contents\Post\Recent::alloc()
-                    ->parse('
-<div class="media-link mt20">
-    <h2 class="t-lg t-line-1" title="{title}"> 
-        <i class="fa fa-angle-right t-sm c-sub mr-1"></i> 
-        <a class="a-link t-w-400 t-md" title="{title}" href="{permalink}">
-            {title}
-        </a> 
-    </h2>
-</div>                    
-'); ?>   
+                <?php \Widget\Contents\Post\Recent::alloc() ->parse('<div class="media-link mt20"><h2 class="t-lg t-line-1" title="{title}"><i class="fa fa-angle-right t-sm c-sub mr-1"></i> <a class="a-link t-w-400 t-md" title="{title}" href="{permalink}">{title}</a> </h2></div>'); ?>   
             </div>
         </div>
         <?php endif; ?>
 <!-- 热门文章 -->
-<?php if (!empty($this->options->sidebarBlock) && in_array('ShowHotPosts', $this->options->sidebarBlock)): ?>
-<?php
+<?php if (!empty($this->options->sidebarBlock) && in_array('ShowHotPosts', $this->options->sidebarBlock)):
     $db = Typecho_Db::get();
     $select = $db->select(
         'table.contents.cid',
@@ -103,9 +92,7 @@
     } catch (Exception $e) {
         $hotPosts = [];
     }
-    ?>
-    
-    <?php if (!empty($hotPosts)): ?>
+    if (!empty($hotPosts)): ?>
     <div class="pk-widget p-block">
         <div> 
             <span class="t-lg border-bottom border-primary puock-text pb-2">
@@ -113,8 +100,7 @@
             </span> 
         </div>
         <div class="mt20">
-            <?php foreach ($hotPosts as $post): ?>
-                <?php
+            <?php foreach ($hotPosts as $post):
                 // 更可靠的获取文章链接方式
                 $widget = Typecho_Widget::widget('Widget_Contents_Post_Recent');
                 $permalink = '';
@@ -147,11 +133,9 @@
             <?php endforeach; ?>
         </div>
     </div>
-    <?php endif; ?>
-<?php endif; ?>
+    <?php endif;endif; ?>
         <!-- 最近评论 -->
-        <?php if (!empty($this->options->sidebarBlock) && in_array('ShowRecentComments', $this->options->sidebarBlock)): ?>
-        <?php 
+        <?php if (!empty($this->options->sidebarBlock) && in_array('ShowRecentComments', $this->options->sidebarBlock)):
         // 设置参数来排除管理员评论
         $comments = \Widget\Comments\Recent::alloc(array(
             'ignoreAuthor' => true  // 这里添加参数来排除作者/管理员评论
@@ -165,8 +149,7 @@
             </div>
             <div class="mt20">
                 <div class="min-comments t-md">
-                    <?php \Widget\Comments\Recent::alloc()->to($comments); ?>
-                    <?php while ($comments->next()): ?>
+                    <?php \Widget\Comments\Recent::alloc()->to($comments);while ($comments->next()): ?>
                     <div class="comment t-md t-line-1"> 
                         <?php echo $comments->gravatar('40', ''); ?>
                         <a class="puock-link" href="<?php $comments->permalink(); ?>"> 
@@ -180,8 +163,7 @@
         </div>
         <?php endif; ?>
 <!-- 热门标签 -->
-<?php if (!empty($this->options->sidebarBlock) && in_array('ShowTags', $this->options->sidebarBlock)): ?>
-<?php
+<?php if (!empty($this->options->sidebarBlock) && in_array('ShowTags', $this->options->sidebarBlock)):
 $tags = \Widget\Metas\Tag\Cloud::alloc('sort=count&desc=1');
 if ($tags->have()):
 // 定义可用的颜色类数组
@@ -205,7 +187,6 @@ $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning'
         </div>
     </div>
 </div>
-<?php endif; ?>
-<?php endif; ?>
-    </div>
+<?php endif;endif; ?>
+</div>
 </div>

@@ -52,8 +52,7 @@
                     <div>
                         <?php if($this->is('post')): ?>
                         <button id="comment-cancel" type="button" class="btn btn-outline-dark d-none btn-ssm">取消</button>
-                        <?php endif; ?>
-                        <?php if($this->options->social): ?>
+                        <?php endif;if($this->options->social): ?>
                         <button id="comment-smiley" class="btn btn-outline-secondary btn-ssm pk-modal-toggle" type="button" title="表情" data-once-load="true"
                             data-url="<?php echo get_correct_url('/emoji/'); ?>">
                             <i class="fa-regular fa-face-smile t-md"></i>
@@ -123,8 +122,7 @@
     <!-- 评论列表 -->
     <?php if ($this->have()): ?>
     <div id="post-comments">
-        <?php $this->comments()->to($comments); ?>
-        <?php $comments->listComments(); ?>
+        <?php $this->comments()->to($comments);$comments->listComments(); ?>
         
         <!-- 评论分页 -->
         <div class="mt20 p-flex-s-right" data-no-instant>
@@ -161,8 +159,7 @@
                 <span class="t-md puock-links">
                     <?php $comments->author(); ?>
                 </span>
-                <?php $commentApprove = commentApprove($comments, $comments->mail); ?>
-                <?php if ($comments->authorId === $comments->ownerId): ?>
+                <?php $commentApprove = commentApprove($comments, $comments->mail);if ($comments->authorId === $comments->ownerId): ?>
                 <span class="t-sm text-danger">
                     <i class="fa-regular fa-gem mr-1"></i>博主
                 </span>

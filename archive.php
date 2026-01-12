@@ -14,8 +14,7 @@ $this->need('header.php');
 <div id="posts">
 <?php if ($this->options->listmodel): ?>
 <div class=" mr-0 ml-0">  
-<?php while ($this->next()): ?>
-<?php 
+<?php while ($this->next()):
 $coverImage = getPostCover($this->content, $this->cid);
 ?>
 <article class="block card-plain post-item p-block post-item-list">
@@ -27,8 +26,7 @@ $coverImage = getPostCover($this->content, $this->cid);
 <div class="post-info">
 <div class="info-top">
 <h2 class="info-title"> 
-<?php if (isset($this->isSticky) && $this->isSticky): ?><?php echo $this->stickyHtml; ?><?php endif; ?>
-<?php foreach($this->categories as $category): ?>
+<?php if (isset($this->isSticky) && $this->isSticky):echo $this->stickyHtml; endif; foreach($this->categories as $category): ?>
 <a class="badge d-none d-md-inline-block bg-primary ahfff" href="<?php echo $category['permalink']; ?>">
 <i class="fa-regular fa-folder-open"></i> <?php echo $category['name']; ?>
 </a> 
@@ -78,14 +76,9 @@ $coverImage = getPostCover($this->content, $this->cid);
                 'nextClass' => 'next'
             )); ?>
 </div>
-<?php else: ?>
-<?php $this->need('card.php'); ?>
-<?php endif; ?>        
+<?php else:$this->need('card.php');endif; ?>        
 </div>
 </div>
 </div>
 </div>
-<?php if ($this->options->showsidebar): ?>    
-<?php $this->need('sidebar.php'); ?>
-<?php endif; ?>
-<?php $this->need('footer.php'); ?>
+<?php if ($this->options->showsidebar):$this->need('sidebar.php'); endif;$this->need('footer.php'); ?>

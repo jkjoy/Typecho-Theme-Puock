@@ -1,7 +1,6 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <div class="row row-cols-1 animated fadeInUp " id="magazines">
-<?php $this->widget('Widget_Metas_Category_List')->to($categories); ?>
-<?php while($categories->next()): ?>
+<?php $this->widget('Widget_Metas_Category_List')->to($categories);while($categories->next()): ?>
 <div class="col-md-6 pr-0 magazine">
     <div class="p-block">
         <div> 
@@ -13,13 +12,7 @@
         </div>
         <?php 
         $this->widget('Widget_Archive@category_' . $categories->mid, 'pageSize=5&type=category', 'mid=' . $categories->mid)->to($posts);
-        ?>
-        <?php if($posts->have()): ?>
-        <?php $postCount = 0; ?>
-        <?php while($posts->next()): ?>
-        <?php $postCount++; ?>
-        <?php $coverImage = getPostCover($posts->content, $posts->cid);?>        
-        <?php if($postCount === 1): ?>
+        if($posts->have()):$postCount = 0;while($posts->next()):$postCount++;$coverImage = getPostCover($posts->content, $posts->cid);if($postCount === 1): ?>
         <!-- 第一篇文章使用特殊样式 -->
         <div class="mtb10 magazine-media-item"> 
             <a class="img ww" href="<?php $posts->permalink() ?>"> 
@@ -47,10 +40,7 @@
                 </div>
             </div>
         </div>
-        <?php endif; ?>
-        
-        <?php endwhile; ?>
-        <?php else: ?>
+        <?php endif;endwhile;else: ?>
             <p>该分类下没有文章。</p>
         <?php endif; ?>
     </div>

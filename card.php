@@ -1,7 +1,6 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <div class="row mr-0 ml-0">
-<?php while ($this->next()): ?>
-<?php 
+<?php while ($this->next()):
 $coverImage = getPostCover($this->content, $this->cid);
 $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info'];
 ?>
@@ -14,7 +13,7 @@ $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning'
             </a>
             <div class="post-tags"> 
                 <span class="badge bg-danger"></span>
-                <?php if (isset($this->isSticky) && $this->isSticky): ?><?php echo $this->stickyHtml; ?><?php endif; ?> 
+                <?php if (isset($this->isSticky) && $this->isSticky): echo $this->stickyHtml; endif; ?> 
             </div>
         </div>
         <div class="post-info">
@@ -62,8 +61,7 @@ $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning'
         </div>
     </div>
 </article> 
-<?php endwhile; ?>
-<?php 
+<?php endwhile;
 $pageprev = $this->options->pageprev ?? '0';
 if ($pageprev == '1' && $this->have()): 
 ?>

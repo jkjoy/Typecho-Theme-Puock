@@ -1,5 +1,5 @@
-<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
-<?php $this->need('header.php'); ?>
+<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit;
+$this->need('header.php'); ?>
 <div id="breadcrumb" class="animated fadeInUp">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">

@@ -5,7 +5,7 @@
  * 
  * @package Typecho Pouck Theme
  * @author 老孙博客
- * @version 1.3.0
+ * @version 1.3.1
  * @link http://www.imsun.org
  */
 
@@ -25,8 +25,7 @@ $this->need('sticky.php');
 <div id="posts">
 <?php if ($this->options->listmodel): ?>
 <div class=" mr-0 ml-0">  
-<?php while ($this->next()): ?>
-<?php 
+<?php while ($this->next()):
 $coverImage = getPostCover($this->content, $this->cid);
 $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info'];
 ?>
@@ -39,8 +38,7 @@ $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning'
 <div class="post-info">
 <div class="info-top">
 <h2 class="info-title"> 
-<?php if (isset($this->isSticky) && $this->isSticky): ?><?php echo $this->stickyHtml; ?><?php endif; ?>
-<?php foreach($this->categories as $category): ?>
+<?php if (isset($this->isSticky) && $this->isSticky): echo $this->stickyHtml; endif;foreach($this->categories as $category): ?>
 <a class="badge d-none d-md-inline-block <?php echo $colors[array_rand($colors)]; ?> ahfff" href="<?php echo $category['permalink']; ?>">
 <i class="fa-regular fa-folder-open"></i> <?php echo $category['name']; ?>
 </a> 
@@ -77,8 +75,7 @@ $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning'
 </div> 
 <span class="title-l-c bg-primary"></span>
 </article>  
-<?php endwhile; ?>
-<?php 
+<?php endwhile;
 $pageprev = $this->options->pageprev ?? '0';
 if ($pageprev == '1' && $this->have()): 
 ?>
@@ -95,14 +92,9 @@ if ($pageprev == '1' && $this->have()):
 </div>
 <?php endif; ?>
 </div>
-<?php else: ?>
-<?php $this->need('card.php'); ?>
-<?php endif; ?>
+<?php else: $this->need('card.php'); endif; ?>
 </div>
 </div>
 </div>
 </div>
-<?php if ($this->options->showsidebar): ?>   
-<?php $this->need('sidebar.php'); ?>
-<?php endif; ?>
-<?php $this->need('footer.php'); ?>
+<?php if ($this->options->showsidebar):$this->need('sidebar.php'); endif;$this->need('footer.php'); ?>

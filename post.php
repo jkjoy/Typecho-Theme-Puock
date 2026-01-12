@@ -78,12 +78,9 @@ echo parse_shortcodes($content, $this);
 <div class="t-separator c-sub t-sm mt30">正文完</div>
 <div class="footer-info puock-text mt20">
 <div class="mt20 tags">
-<?php if ($this->tags): ?>
-<?php foreach ($this->tags as $tag): ?>
+<?php if ($this->tags):foreach ($this->tags as $tag): ?>
 <a href="<?php echo $tag['permalink']; ?>" class="pk-badge pk-badge-sm mr5 mb10"><i class="fa-solid fa-tag"></i> <?php echo $tag['name']; ?></a> 
-<?php endforeach; ?>
-<?php else: ?>
-<?php endif; ?>
+<?php endforeach; else: endif; ?>
 </div>
 <div class="p-flex-sbc mt20 t-sm">
 <div> 
@@ -137,8 +134,7 @@ echo parse_shortcodes($content, $this);
 <?php if ($this->options->articlemid): ?>
     <!--文章中广告-->
     <div class="puock-text p-block t-md ad-page-content-bottom"><?php $this->options->articlemid(); ?></div>
-<?php endif; ?>
-<?php $this->related(4)->to($relatedPosts); if ($relatedPosts->have()):?>
+<?php endif;$this->related(4)->to($relatedPosts); if ($relatedPosts->have()):?>
     <!--相关文章-->
     <div class="p-block pb-0">
         <div class="row puock-text post-relevant"> 
@@ -220,13 +216,9 @@ echo parse_shortcodes($content, $this);
     </div>
 </div>
 <!--评论上方--> 
-<?php $this->need('comments.php'); ?>   
-<?php if ($this->options->articlefoot): ?>
+<?php $this->need('comments.php');if ($this->options->articlefoot): ?>
     <!--文章底部广告-->
 <div class="puock-text p-block t-md ad-comment-top"><?php $this->options->articlefoot(); ?></div> 
 <?php endif; ?>
 </div>
-<?php if ($this->options->showsidebar): ?>
-<?php $this->need('sidebar.php'); ?>
-<?php endif; ?>
-<?php $this->need('footer.php'); ?>
+<?php if ($this->options->showsidebar): $this->need('sidebar.php');endif;$this->need('footer.php'); ?>

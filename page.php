@@ -1,5 +1,5 @@
-<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
-<?php $this->need('header.php'); ?>
+<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit;
+$this->need('header.php'); ?>
 <div id="breadcrumb" class="animated fadeInUp">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -67,11 +67,6 @@ echo parse_shortcodes($content, $this);
 ?>
 </div>
 </div>    
-<?php if ($this->allow('comment')): ?>
-    <?php $this->need('comments.php'); ?>
-<?php endif; ?>
+<?php if ($this->allow('comment')):$this->need('comments.php');endif; ?>
 </div>   
-<?php if ($this->options->showsidebar): ?>    
-<?php $this->need('sidebar.php'); ?>
-<?php endif; ?>
-<?php $this->need('footer.php'); ?>
+<?php if ($this->options->showsidebar): $this->need('sidebar.php');endif; $this->need('footer.php'); ?>

@@ -4,7 +4,7 @@ function themeConfig($form)
 {   
     themeAutoUpgradeNotice();
     echo '<style>.typecho-page-title h2 {font-weight: 600;color: #737373;}.typecho-page-title h2:before {content: "#";margin-right: 6px;color: #ff6d6d; font-size: 20px;font-weight: 600;}.themeConfig h3 {color: #737373;font-size: 20px;}.themeConfig h3:before {content: "[";margin-right: 5px;color: #ff6d6d;font-size: 25px;}.themeConfig h3:after {content: "]";margin-left: 5px;color: #ff6d6d;font-size: 25px;}.themeConfiginfo{border: 1px solid #ffadad;padding: 20px;margin: -15px 10px 25px 0;background: #ffffff;border-radius: 5px;color: #ff6d6d;}</style>';
-    $logoUrl = new Typecho_Widget_Helper_Form_Element_Text('logoUrl', NULL, NULL, _t('<span class="themeConfig"><h3>博客设置</h3></span>站点 LOGO 地址'), _t('建议尺寸 100px * 100px,不填写则使用站点标题'));
+    $logoUrl = new Typecho_Widget_Helper_Form_Element_Text('logoUrl', NULL, NULL, _t('<span class="themeConfig"><h3>博客设置</h3></span><div class="themeConfiginfo">全局设置</div>站点 LOGO 地址'), _t('建议尺寸 100px * 100px,不填写则使用站点标题'));
     $form->addInput($logoUrl);
     $icoUrl = new Typecho_Widget_Helper_Form_Element_Text('icoUrl', NULL, NULL, _t('站点 Favicon 地址'), _t('建议尺寸 16px * 16px,不填写则使用默认图标'));
     $form->addInput($icoUrl);
@@ -12,10 +12,10 @@ function themeConfig($form)
     $form->addInput($primaryColor);
     $cnavatar = new Typecho_Widget_Helper_Form_Element_Text('cnavatar', NULL, NULL, _t('Gravatar镜像'), _t('默认使用https://cravatar.cn/avatar/'));
     $form->addInput($cnavatar);
-    $sticky = new Typecho_Widget_Helper_Form_Element_Text('sticky', NULL, NULL, _t('<span class="themeConfig"><h3>文章推荐</h3></span><br>置顶文章'), _t('填入文章的cid,多个cid以`|`符号隔开'));
+    $sticky = new Typecho_Widget_Helper_Form_Element_Text('sticky', NULL, NULL, _t('<span class="themeConfig"><h3>文章推荐</h3></span><div class="themeConfiginfo">填入文章的cid,多个cid以`|`符号隔开</div>置顶文章'), _t('支持多个置顶文章,如: 1|2|3. 填写文章的cid,不填写则不置顶'));
     $form->addInput($sticky);
     $listmodel = new Typecho_Widget_Helper_Form_Element_Radio('listmodel',
-    array('0'=> _t('卡片模式'), '1'=> _t('列表模式')),'0', _t('<span class="themeConfig"><h3>个性化设置</h3></span><div class="themeConfiginfo">根据需求设置</div>列表模式'));
+    array('0'=> _t('卡片模式'), '1'=> _t('列表模式')),'0', _t('<span class="themeConfig"><h3>个性化设置</h3></span><div class="themeConfiginfo">根据需求设置,部分功能需要搭配插件使用</div>列表模式'));
     $form->addInput($listmodel);
     $pageprev = new Typecho_Widget_Helper_Form_Element_Radio('pageprev',
     array('0'=> _t('不显示翻页页码'), '1'=> _t('显示页码')),'0', _t('首页文章列表页码'));
@@ -25,11 +25,11 @@ function themeConfig($form)
     $form->addInput($cmsmodel);
     $friendlink = new Typecho_Widget_Helper_Form_Element_Radio('friendlink',
     array('0'=> _t('关闭'), '1'=> _t('开启')),
-    '0', _t('首页友情链接'), _t('选择"开启"在首页显示友情链接。开启前请安装"Links"插件。链接分类需设置为<b>home</b>，默认关闭'));
+    '0', _t('首页友情链接'), _t('选择"开启"在首页显示友情链接。默认关闭,开启前请先安装插件'));
     $form->addInput($friendlink);
     $social = new Typecho_Widget_Helper_Form_Element_Radio('social',
     array('0'=> _t('关闭'), '1'=> _t('开启')),
-    '0', _t('社交分享显示'), _t('选择"开启"在文章页面显示社交分享。需要搭配插件使用,默认关闭'));
+    '0', _t('社交分享显示'), _t('选择"开启"在文章页面显示社交分享。默认关闭,开启前请先安装插件'));
     $form->addInput($social);
     $gonggao = new Typecho_Widget_Helper_Form_Element_Textarea('gonggao', NULL, NULL, _t('站点公告'), _t('<b style=color:red>使用格式: </b><b>标题|链接|图标</b><br>多条公告回车分隔.链接和图标可以为空.图标使用Font Awesome,如: fa-regular fa-bell'));
     $form->addInput($gonggao);

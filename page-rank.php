@@ -32,7 +32,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
                             <a href="<?php echo htmlspecialchars($commenter['url']); ?>" target="_blank" rel="nofollow"> 
                                 <img data-bs-toggle="tooltip" src='<?php $this->options->themeUrl('assets/img/load.svg'); ?>' class='lazy md-avatar' data-src='<?php echo htmlspecialchars($commenter['avatar']); ?>' title="<?php echo htmlspecialchars($commenter['nickname']); ?>" alt="<?php echo htmlspecialchars($commenter['nickname']); ?>"> 
                                 <span class="t-sm">
-                                    <span class="c-sub">+(<?php echo $commenter['comment_count']; ?>)&nbsp;</span>
+                                <span class="c-sub">+(<?php echo $commenter['comment_count']; ?>)&nbsp;</span>
                                     <?php echo htmlspecialchars($commenter['nickname']); ?></span> 
                             </a> 
                         <?php else: ?>  
@@ -48,7 +48,4 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
         </div>
     </div>
 </div>
-<?php if ($this->options->showsidebar): ?>    
-<?php $this->need('sidebar.php'); ?>   
-<?php endif; ?>        
-<?php $this->need('footer.php'); ?>
+<?php if ($this->options->showsidebar):$this->need('sidebar.php');endif;$this->need('footer.php'); ?>

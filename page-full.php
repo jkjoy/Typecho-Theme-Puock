@@ -22,8 +22,6 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 </div>
 </div>
 </div>
-<?php if ($this->allow('comment')): ?>
-    <?php $this->need('comments.php'); ?>
-<?php endif; ?>
+<?php if ($this->allow('comment')):$this->need('comments.php');endif; ?>
 </div>
 <?php $this->need('footer.php'); ?>

@@ -22,8 +22,7 @@ $this->need('header.php');
             <div id="comments" class="col-lg-8 col-md-12 animated fadeInLeft">
         <?php else: ?>
             <div id="comments" class="col-lg-12 col-md-12">
-        <?php endif; ?>
-            <?php
+        <?php endif;
             // 登录状态检测
             if ($this->user->hasLogin()) {
                 $GLOBALS['isLogin'] = true;
@@ -68,9 +67,7 @@ $this->need('header.php');
                         </div>
                     </div>
                  </div>
-            <?php } ?>
-    <?php $this->comments()->to($comments); ?>
-    <?php if ($this->user->hasLogin() && $this->user->group == 'administrator') : ?>
+            <?php } $this->comments()->to($comments);if ($this->user->hasLogin() && $this->user->group == 'administrator') : ?>
     <div class="p-block">
         <input type="hidden" value="<?php $this->commentUrl() ?>">
         <div>
@@ -86,16 +83,14 @@ $this->need('header.php');
                 <input type="hidden" value="<?php $this->user->screenName(); ?>" name="author" />
                 <input type="hidden" value="<?php $this->user->mail(); ?>" name="mail" />
                 <input type="hidden" value="<?php $this->options->siteUrl(); ?>" name="url" />
-                <input type="hidden" name="_" value="<?php Typecho_Widget::widget('Widget_Security')->to($security);
-                    echo $security->getToken($this->request->getRequestUrl()); ?>">
+                <input type="hidden" name="_" value="<?php Typecho_Widget::widget('Widget_Security')->to($security); echo $security->getToken($this->request->getRequestUrl()); ?>">
                 <div class="p-flex-sbc mt10">
                     <div class="form-foot">
                         <?php if($this->options->social): ?>
                         <button id="comment-insert-image" class="btn btn-outline-secondary btn-ssm" type="button" title="插入图片">
                             <i class="fa-solid fa-image"></i>
                         </button>
-                        <button id="comment-smiley" class="btn btn-outline-secondary btn-ssm pk-modal-toggle" type="button" title="表情" data-once-load="true"
-                                    data-url="<?php echo get_correct_url('/emoji/'); ?>">
+                        <button id="comment-smiley" class="btn btn-outline-secondary btn-ssm pk-modal-toggle" type="button" title="表情" data-once-load="true" data-url="<?php echo get_correct_url('/emoji/'); ?>">
                         <i class="fa-regular fa-face-smile t-md"></i>
                         </button>
                         <?php endif; ?>
@@ -105,12 +100,7 @@ $this->need('header.php');
             </form>
         </div>
     </div>
-    <?php endif; ?>
-    <?php if ($comments->have()): ?>
-    <!-- 评论列表 -->
-    <?php while ($comments->next()): ?>
-        <?php threadedComments($comments, $this->options); ?>
-    <?php endwhile; ?>
+    <?php endif;if ($comments->have()): while ($comments->next()):threadedComments($comments, $this->options);endwhile; ?>
     <!-- 分页导航 -->
     <div class="mt20 p-flex-s-right" data-no-instant>
         <?php $comments->pageNav('&laquo;', '&raquo;', 1, '...', array(
@@ -124,10 +114,7 @@ $this->need('header.php');
         )); ?>
     </div>
     </div>
-    <?php endif; ?>
-        <?php if ($this->options->showsidebar): ?>             
-            <?php $this->need('sidebar.php'); ?> 
-        <?php endif; ?>
+    <?php endif;if ($this->options->showsidebar):$this->need('sidebar.php');endif; ?>
     </div>
 </div>
 <?php $this->need('footer.php'); ?>

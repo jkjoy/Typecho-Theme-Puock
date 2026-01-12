@@ -10,16 +10,17 @@
             'search'   => _t('包含关键字 %s 的文章'),
             'tag'      => _t('标签 %s 下的文章'),
             'author'   => _t('%s 发布的文章')
-        ], '', ' - '); ?>
-        <?php $this->options->title(); ?>
-        <?php if ($this->is('index')) echo ' - '; ?>
-        <?php if ($this->is('index')) $this->options->description() ?>
+        ], '', ' - ');
+        $this->options->title();
+        if ($this->is('index')) echo ' - ';
+        if ($this->is('index')) 
+        $this->options->description() ?>
     </title>
     <link rel="canonical" href="<?php $this->options->siteUrl(); ?>">
     <meta name='robots' content='max-image-preview:large' />
     <?php $this->options->addhead(); ?>
     <style id='puock-inline-css' type='text/css'>
-        body {--pk-c-primary: <?php if ($this->options->primaryColor): ?><?php $this->options->primaryColor() ?><?php else: ?>#A7E6F4<?php endif; ?> !important;}
+        body {--pk-c-primary: <?php if ($this->options->primaryColor): $this->options->primaryColor() ?><?php else: ?>#A7E6F4<?php endif; ?> !important;}
         :root {--puock-block-not-tran: 80% !important;}
     </style> 
     <?php if ($this->options->icoUrl): ?>
@@ -58,8 +59,8 @@
                     </a>
                     <?php endif; ?>
                     <div class="d-none d-lg-block puock-links">
-                        <div id="menus" class="t-md ">
-                            <ul>
+                    <div id="menus" class="t-md ">
+                    <ul>
                     <?php if ($this->is('index')): ?>
                     <li class="menu-current current-menu-item"><?php else: ?><li><?php endif; ?>
                         <a class="nav-link" href="<?php $this->options->siteUrl(); ?>">
@@ -69,8 +70,7 @@
                     <li class='menu-item'>
                         <a class='ww' data-color='auto' href='#'>分类<i class="fa fa-chevron-down t-sm ml-1 menu-sub-icon"></i></a>
                         <ul class="sub-menu ">
-                            <?php $categories = Typecho_Widget::widget('Widget_Metas_Category_List'); ?>
-                            <?php while($categories->next()): ?>
+                            <?php $categories = Typecho_Widget::widget('Widget_Metas_Category_List');while($categories->next()): ?>
                             <li class="menu-itemmenu-item-child">
                             <a href="<?php $categories->permalink(); ?>" class='ww' data-color='auto'>
                             <?php $categories->name(); ?>
@@ -79,8 +79,7 @@
                             <?php endwhile; ?>
                         </ul>
                     </li>
-                    <?php \Widget\Contents\Page\Rows::alloc()->to($pages); ?>
-                    <?php while ($pages->next()): ?>
+                    <?php \Widget\Contents\Page\Rows::alloc()->to($pages);while ($pages->next()): ?>
                     <li class="menu-item <?php if ($this->is('page', $pages->slug)) echo ' current-menu-item current_page_item menu-current'; ?>">
                         <a class='ww'
                             href="<?php $pages->permalink(); ?>"
@@ -88,19 +87,18 @@
                             <?php $pages->title(); ?>
                         </a>
                     </li>
-                    <?php endwhile; ?>
-                    <?php if($this->user->hasLogin()): ?> 
+                    <?php endwhile;if($this->user->hasLogin()): ?> 
                         <li>
                             <a data-bs-toggle="tooltip" title="用户中心" href="/admin/" target="_blank">
                             <img alt="用户中心" src="<?php $stats = get_site_statistics();echo $stats['avatar']; ?>" class="min-avatar">
                             </a>
                         </li>
                     <?php else: ?>
-                    <li><a data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" href="javascript:void(0)" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>"><i class="fa fa-right-to-bracket"></i></a></li>
+                        <li><span data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" href="javascript:void(0)" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>"><i class="fa fa-right-to-bracket"></i></span></li>
                     <?php endif; ?>
-                                <li><a class="colorMode" data-bs-toggle="tooltip" title="模式切换" href="javascript:void(0)"><i class="fa fa-circle-half-stroke"></i></a></li>
-                                <li><a class="search-modal-btn" data-bs-toggle="tooltip" title="搜索" href="javascript:void(0)"><i class="fa fa-search"></i></a></li>
-                            </ul>
+                        <li><span class="colorMode" data-bs-toggle="tooltip" title="模式切换" href="javascript:void(0)"><i class="fa fa-circle-half-stroke"></i></span></li>
+                        <li><span class="search-modal-btn" data-bs-toggle="tooltip" title="搜索" href="javascript:void(0)"><i class="fa fa-search"></i></span></li>
+                        </ul>
                         </div>
                     </div>
                     <div class="mobile-menus d-block d-lg-none p-1 puock-text"> 
@@ -135,20 +133,20 @@
                                     <a href="<?php $this->options->siteUrl(); ?>">首页</a>
                                 </span>
                             </li>
-                            <?php \Widget\Contents\Page\Rows::alloc()->to($pages); ?>
-                            <?php while ($pages->next()): ?>
+                            <?php \Widget\Contents\Page\Rows::alloc()->to($pages); while ($pages->next()): ?>
                             <li class='menu-item'>
-                                <span><a class='ww' href="<?php $pages->permalink(); ?>" title="<?php $pages->title(); ?>">
+                                <span>
+                                    <a class='ww' href="<?php $pages->permalink(); ?>" title="<?php $pages->title(); ?>">
                                     <?php $pages->title(); ?>
-                                </a></span>
+                                    </a>
+                                </span>
                             </li>
                             <?php endwhile; ?>
                             <li class='menu-item'>
                             <span><a href="#">分类</a>
                             <a href="#menu" data-bs-toggle="collapse"><i class="fa fa-chevron-down t-sm ml-1 menu-sub-icon"></i></a></span>
                             <ul id="menu" class="sub-menu collapse">
-                            <?php $categories = Typecho_Widget::widget('Widget_Metas_Category_List'); ?>
-                            <?php while($categories->next()): ?>
+                            <?php $categories = Typecho_Widget::widget('Widget_Metas_Category_List');while($categories->next()): ?>
                             <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-child">
                             <span>
                             <a href="<?php $categories->permalink(); ?>" class='ww' data-color='auto'>
@@ -160,12 +158,12 @@
                             </ul>
                             <?php if($this->user->hasLogin()): ?> 
                         <li>
-                            <a data-bs-toggle="tooltip" title="用户中心" href="/admin/" target="_blank">
+                        <a data-bs-toggle="tooltip" title="用户中心" href="/admin/" target="_blank">
                             <img alt="用户中心" src="<?php $stats = get_site_statistics();echo $stats['avatar']; ?>" class="min-avatar">
-                            </a>
+                        </a>
                         </li>
                     <?php else: ?>
-                    <li><a data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" href="javascript:void(0)" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>"><i class="fa fa-right-to-bracket"></i></a></li>
+                    <li><span data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" href="javascript:void(0)" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>"><i class="fa fa-right-to-bracket"></i></span></li>
                     <?php endif; ?>
                         </ul>
                     </nav>
@@ -177,8 +175,7 @@
 <div id="content" class="mt15 container"> <!--全局上方-->
 <?php if($this->options->adlisttop): ?>
 <div class="puock-text p-block t-md ad-global-top"><?php $this->options->adlisttop(); ?></div>
-<?php endif; ?>
-<?php if($this->options->gonggao): ?>
+<?php endif;if($this->options->gonggao): ?>
 <div class="puock-text p-block t-md global-top-notice">
 <div data-swiper="init" data-swiper-class="global-top-notice-swiper" data-swiper-args='{"direction":"vertical","autoplay":{"delay":3000,"disableOnInteraction":false},"loop":true}'>
 <div class="swiper global-top-notice-swiper">
