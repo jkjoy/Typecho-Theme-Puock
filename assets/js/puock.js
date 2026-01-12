@@ -1142,6 +1142,11 @@ class Puock {
             const title = el.attr("title") || el.data("title") || '提示';
             const url = el.data("url");
             const onceLoad = el.data("once-load")
+
+            // If this is an <a>, keep it crawlable but prevent navigation on normal clicks.
+            if (url && e && e.preventDefault && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                e.preventDefault();
+            }
             
             // 检查 url 是否存在，避免 SparkMD5 错误
             if (!url) {

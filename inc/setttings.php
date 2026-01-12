@@ -64,6 +64,24 @@ function themeConfig($form)
     $form->addInput($showsidebar);
     $bgUrl = new Typecho_Widget_Helper_Form_Element_Text('bgUrl', NULL, NULL, _t('自定义背景图片地址'), _t('用于侧边栏个人信息展示的背景图片'));
     $form->addInput($bgUrl);
+
+    $sidebarHotPostsLimit = new Typecho_Widget_Helper_Form_Element_Text(
+        'sidebarHotPostsLimit',
+        NULL,
+        '',
+        _t('侧边栏热门文章数量'),
+        _t('不填写则默认显示 5 条')
+    );
+    $form->addInput($sidebarHotPostsLimit);
+
+    $sidebarTagsLimit = new Typecho_Widget_Helper_Form_Element_Text(
+        'sidebarTagsLimit',
+        NULL,
+        '',
+        _t('侧边栏热门标签数量'),
+        _t('不填写则默认显示 5 条')
+    );
+    $form->addInput($sidebarTagsLimit);
     $sidebarBlock = new \Typecho\Widget\Helper\Form\Element\Checkbox(
         'sidebarBlock',
         [

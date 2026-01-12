@@ -22,7 +22,7 @@
 <?php if($this->options->adlistfoot): ?>
 <div class="puock-text p-block t-md ad-global-bottom"><?php $this->options->adlistfoot(); ?></div>
 <?php endif; ?>
-</div>
+</main>
 <div id="post-menus" class="post-menus-box"> 
     <div id="post-menu-state" class="post-menu-toggle" title="打开或关闭文章目录"> 
         <i class="puock-text ta3 fa fa-bars"></i> 

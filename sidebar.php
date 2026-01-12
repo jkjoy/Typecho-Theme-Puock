@@ -16,12 +16,9 @@
                 </form>
             </div>
         </div>
-        <?php endif; ?>
-
-<!-- 个人信息 -->   
-<?php $stats = get_site_statistics(); ?>
-        <?php if (!empty($this->options->sidebarBlock) && in_array('ShowAdmin', $this->options->sidebarBlock)): ?>
-        <div class="widget-puock-author widget">
+        <?php endif;$stats = get_site_statistics();if (!empty($this->options->sidebarBlock) && in_array('ShowAdmin', $this->options->sidebarBlock)): ?>
+        <!-- 个人信息 -->   
+         <div class="widget-puock-author widget">
             <div class="header" style="background-image: url('<?php echo !empty($this->options->bgUrl) ? $this->options->bgUrl : $this->options->themeUrl('assets/img/cover.png'); ?>')">
                 <img src='<?php $this->options->themeUrl('assets/img/load.svg'); ?>' class='lazy avatar' data-src='<?php echo $stats['avatar']; ?>' alt='<?php echo $stats['nickname']; ?>' title='<?php echo $stats['nickname']; ?>' />
             </div>
@@ -50,10 +47,8 @@
                 </div>
             </div>
         </div>
-        <?php endif; ?>
-
-<!-- 最新文章 -->
-        <?php if (!empty($this->options->sidebarBlock) && in_array('ShowRecentPosts', $this->options->sidebarBlock)): ?>
+        <?php endif;if (!empty($this->options->sidebarBlock) && in_array('ShowRecentPosts', $this->options->sidebarBlock)): ?>
+        <!-- 最新文章 -->
         <div class="pk-widget p-block ">
             <div>
                 <span class="t-lg border-bottom border-primary puock-text pb-2">
@@ -64,9 +59,11 @@
                 <?php \Widget\Contents\Post\Recent::alloc() ->parse('<div class="media-link mt20"><h2 class="t-lg t-line-1" title="{title}"><i class="fa fa-angle-right t-sm c-sub mr-1"></i> <a class="a-link t-w-400 t-md" title="{title}" href="{permalink}">{title}</a> </h2></div>'); ?>   
             </div>
         </div>
-        <?php endif; ?>
-<!-- 热门文章 -->
-<?php if (!empty($this->options->sidebarBlock) && in_array('ShowHotPosts', $this->options->sidebarBlock)):
+    <?php endif;if (!empty($this->options->sidebarBlock) && in_array('ShowHotPosts', $this->options->sidebarBlock)):
+    $hotPostsLimit = (int)($this->options->sidebarHotPostsLimit ?? 0);
+    if ($hotPostsLimit <= 0) {
+        $hotPostsLimit = 5;
+    }
     $db = Typecho_Db::get();
     $select = $db->select(
         'table.contents.cid',
@@ -85,7 +82,7 @@
     ->where('table.contents.status = ?', 'publish')
     ->where('table.contents.password IS NULL')
     ->order('table.contents.commentsNum', Typecho_Db::SORT_DESC)
-    ->limit(5);
+    ->limit($hotPostsLimit);
     
     try {
         $hotPosts = $db->fetchAll($select);
@@ -93,6 +90,7 @@
         $hotPosts = [];
     }
     if (!empty($hotPosts)): ?>
+    <!-- 热门文章 -->
     <div class="pk-widget p-block">
         <div> 
             <span class="t-lg border-bottom border-primary puock-text pb-2">
@@ -133,14 +131,13 @@
             <?php endforeach; ?>
         </div>
     </div>
-    <?php endif;endif; ?>
-        <!-- 最近评论 -->
-        <?php if (!empty($this->options->sidebarBlock) && in_array('ShowRecentComments', $this->options->sidebarBlock)):
+    <?php endif;endif;if (!empty($this->options->sidebarBlock) && in_array('ShowRecentComments', $this->options->sidebarBlock)):
         // 设置参数来排除管理员评论
         $comments = \Widget\Comments\Recent::alloc(array(
             'ignoreAuthor' => true  // 这里添加参数来排除作者/管理员评论
         )); 
         ?>
+        <!-- 最近评论 -->
         <div class="pk-widget p-block ">
             <div> 
                 <span class="t-lg border-bottom border-primary puock-text pb-2">
@@ -161,14 +158,15 @@
                 </div>
             </div>
         </div>
-        <?php endif; ?>
+    <?php endif;if (!empty($this->options->sidebarBlock) && in_array('ShowTags', $this->options->sidebarBlock)):
+    $tagsLimit = (int)($this->options->sidebarTagsLimit ?? 0);
+    if ($tagsLimit <= 0) {
+        $tagsLimit = 5;
+    }
+    $tags = \Widget\Metas\Tag\Cloud::alloc('sort=count&desc=1&limit=' . $tagsLimit);
+    if ($tags->have()):
+    $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info'];?>
 <!-- 热门标签 -->
-<?php if (!empty($this->options->sidebarBlock) && in_array('ShowTags', $this->options->sidebarBlock)):
-$tags = \Widget\Metas\Tag\Cloud::alloc('sort=count&desc=1');
-if ($tags->have()):
-// 定义可用的颜色类数组
-$colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info'];
-?>
 <div class="pk-widget p-block ">
     <div> 
         <span class="t-lg border-bottom border-primary puock-text pb-2">

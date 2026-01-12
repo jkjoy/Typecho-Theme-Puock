@@ -1,6 +1,11 @@
 <?php
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 
+// Trusted Types (DOM XSS sinks) - keep CSP policy minimal to avoid breaking existing resource loading.
+if (!defined('__TYPECHO_ADMIN__') && !headers_sent()) {
+    header("Content-Security-Policy: trusted-types default; require-trusted-types-for 'script'", false);
+}
+
 // 加载核心模块
 require_once __DIR__ . '/inc/core.php';
 require_once __DIR__ . '/inc/setttings.php';

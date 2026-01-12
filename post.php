@@ -174,7 +174,7 @@ echo parse_shortcodes($content, $this);
                     </div>
                 </a>
             <?php else: ?>
-                <a href="javascript:void(0);" rel="prev">
+                <a href="<?php $this->options->siteUrl(); ?>" rel="prev">
                     <div class="abhl puock-text">
                         <p class="t-line-1">没有上一篇</p>
                         <span>上一篇</span>
@@ -205,7 +205,7 @@ echo parse_shortcodes($content, $this);
                     </div>
                 </a>
             <?php else: ?>
-                <a href="javascript:void(0);" rel="next">
+                <a href="<?php $this->options->siteUrl(); ?>" rel="next">
                     <div class="abhl puock-text">
                         <p class="t-line-1">已是最新文章</p>
                         <span>下一篇</span>

@@ -171,7 +171,7 @@
             </div>
             <div class="t-sm c-sub">
                 <span><?php echo friendly_date($comments->created); ?></span>
-                <a rel="nofollow" class="hide-info animated bounceIn c-sub-a t-sm ml-1 comment-reply" href="javascript:void(0);" data-coid="<?php echo $comments->coid; ?>"><span class="comment-reply-text"><i class="fa fa-share-from-square"></i>回复</span></a> 
+                <button type="button" class="btn btn-link p-0 hide-info animated bounceIn c-sub-a t-sm ml-1 comment-reply" data-coid="<?php echo $comments->coid; ?>"><span class="comment-reply-text"><i class="fa fa-share-from-square"></i>回复</span></button> 
             </div>
         </div>
     </div>

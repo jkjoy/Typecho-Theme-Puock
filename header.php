@@ -4,6 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script>
+        (function () {
+            if (!window.trustedTypes || !window.trustedTypes.createPolicy) return;
+            try {
+                window.trustedTypes.createPolicy('default', {
+                    createHTML: function (input) { return input; },
+                    createScript: function (input) { return input; },
+                    createScriptURL: function (input) { return input; }
+                });
+            } catch (e) {}
+        })();
+    </script>
     <meta http-equiv='content-language' content='zh_CN'>
     <title><?php $this->archiveTitle([
             'category' => _t('分类 %s 下的文章'),
@@ -27,7 +39,11 @@
     <link rel="icon" href="<?php $this->options->icoUrl() ?>" sizes="32x32" />
     <link rel="apple-touch-icon" href="<?php $this->options->icoUrl() ?>" />
     <?php endif; ?>
-    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.lite.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
+    <?php if ($this->is('post') || $this->is('page')): ?>
+        <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/highlight.css'); ?>?ver=<?php echo get_theme_version(); ?>" media="print" onload="this.media='all'">
+        <noscript><link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/highlight.css'); ?>?ver=<?php echo get_theme_version(); ?>"></noscript>
+    <?php endif; ?>
     <script src='<?php $this->options->themeUrl('assets/js/jquery.min.js'); ?>?ver=<?php echo get_theme_version(); ?>' type="text/javascript"></script>
     <!-- 通过自有函数输出HTML头部信息 -->
     <?php $this->header(); ?>
@@ -94,10 +110,22 @@
                             </a>
                         </li>
                     <?php else: ?>
-                        <li><span data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" href="javascript:void(0)" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>"><i class="fa fa-right-to-bracket"></i></span></li>
+                        <li>
+                            <a data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>" href="<?php echo get_correct_url('/login/'); ?>" aria-label="登入">
+                                <i class="fa fa-right-to-bracket"></i>
+                            </a>
+                        </li>
                     <?php endif; ?>
-                        <li><span class="colorMode" data-bs-toggle="tooltip" title="模式切换" href="javascript:void(0)"><i class="fa fa-circle-half-stroke"></i></span></li>
-                        <li><span class="search-modal-btn" data-bs-toggle="tooltip" title="搜索" href="javascript:void(0)"><i class="fa fa-search"></i></span></li>
+                        <li>
+                            <button type="button" class="colorMode" data-bs-toggle="tooltip" title="模式切换" aria-label="模式切换">
+                                <i class="fa fa-circle-half-stroke"></i>
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="search-modal-btn" data-bs-toggle="tooltip" title="搜索" aria-label="搜索">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </li>
                         </ul>
                         </div>
                     </div>
@@ -163,7 +191,11 @@
                         </a>
                         </li>
                     <?php else: ?>
-                    <li><span data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" href="javascript:void(0)" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>"><i class="fa fa-right-to-bracket"></i></span></li>
+                    <li>
+                        <a data-no-instant data-bs-toggle="tooltip" title="登入" data-title="登入" class="pk-modal-toggle" data-once-load="true" data-url="<?php echo get_correct_url('/login/'); ?>" href="<?php echo get_correct_url('/login/'); ?>" aria-label="登入">
+                            <i class="fa fa-right-to-bracket"></i>
+                        </a>
+                    </li>
                     <?php endif; ?>
                         </ul>
                     </nav>
@@ -172,7 +204,7 @@
         </div>
 <div id="mobile-menu-backdrop" class="modal-backdrop d-none"></div>
 <div id="search-backdrop" class="modal-backdrop d-none"></div>
-<div id="content" class="mt15 container"> <!--全局上方-->
+<main id="content" class="mt15 container" role="main"> <!--全局上方-->
 <?php if($this->options->adlisttop): ?>
 <div class="puock-text p-block t-md ad-global-top"><?php $this->options->adlisttop(); ?></div>
 <?php endif;if($this->options->gonggao): ?>
@@ -193,16 +225,22 @@ if ($gonggao) {
             $title = trim($parts[0]);
             $url = trim($parts[1]);
             $icon = trim($parts[2]);
-            // 链接为空时使用 javascript:void(0)
-            $href = $url !== '' ? htmlspecialchars($url) : 'javascript:void(0)';
+            $href = $url !== '' ? htmlspecialchars($url) : '';
             // 图标为空时使用默认
             $icon_class = $icon !== '' ? $icon : 'fa-regular fa-bell';
             // 输出 HTML
             echo '<div class="swiper-slide t-line-1">';
-            echo '<a class="ta3" data-no-instant href="' . $href . '">';
-            echo '<span class="notice-icon"><i class="' . $icon_class . '"></i></span>';
-            echo '<span>' . htmlspecialchars($title) . '</span>';
-            echo '</a>';
+            if ($href !== '') {
+                echo '<a class="ta3" data-no-instant href="' . $href . '">';
+                echo '<span class="notice-icon"><i class="' . $icon_class . '"></i></span>';
+                echo '<span>' . htmlspecialchars($title) . '</span>';
+                echo '</a>';
+            } else {
+                echo '<span class="ta3">';
+                echo '<span class="notice-icon"><i class="' . $icon_class . '"></i></span>';
+                echo '<span>' . htmlspecialchars($title) . '</span>';
+                echo '</span>';
+            }
             echo '</div>';
         }
     }
