@@ -1,4 +1,13 @@
 ﻿@charset "UTF-8";
+@font-face {
+    font-family: 'LXGW WenKai Screen';
+    src: url('./webfonts/lxgw.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+  font-family: -apple-system, BlinkMacSystemFont,"LXGW WenKai Screen", sans-serif;
+}
 .viewer-container,
 body {
   -webkit-tap-highlight-color: transparent;
@@ -18873,4 +18882,12 @@ a:not(.btn):hover {
 #post-comments ol.comment-list li.post-comment:hover .hide-info,
 #post-comments ol.comment-list li.post-comment .hide-info-show {
   display: inline-block;
+}
+@media (max-width: 767px) {
+#post-comments .comment-list .children{padding-left:30px!important}
+#post-comments .comment-list .children .children{padding-left:30px!important}
+#post-comments .comment-list .children .children .children{padding-left:0!important}
+#post-comments ol.comment-list .comment-children ol.comment-list{padding-left:30px!important}
+#post-comments ol.comment-list .comment-children .comment-children ol.comment-list{padding-left:30px!important}
+#post-comments ol.comment-list .comment-children .comment-children .comment-children ol.comment-list{padding-left:0!important}
 }

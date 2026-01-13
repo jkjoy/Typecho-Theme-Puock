@@ -55,7 +55,7 @@ function themeConfig($form)
     $form->addInput($articlemid);
     $articlefoot = new Typecho_Widget_Helper_Form_Element_Textarea('articlefoot', NULL, NULL, _t('文章页底部广告位'), _t('支持HTML'));
     $form->addInput($articlefoot);
-    $addhead = new Typecho_Widget_Helper_Form_Element_Textarea('addhead', NULL, '<style>* {font-family: -apple-system, BlinkMacSystemFont,"LXGW WenKai Screen", sans-serif;}</style>', _t('<span class="themeConfig"><h3>网站验证</h3></span><div class="themeConfiginfo">若开启无刷新加载，请在标签上加上data-instant属性</div>网站验证代码'), _t('支持html代码'));
+    $addhead = new Typecho_Widget_Helper_Form_Element_Textarea('addhead', NULL, NULL, _t('<span class="themeConfig"><h3>网站验证</h3></span><div class="themeConfiginfo">若开启无刷新加载，请在标签上加上data-instant属性</div>网站验证代码'), _t('支持html代码'));
     $form->addInput($addhead);
     $tongji = new Typecho_Widget_Helper_Form_Element_Textarea('tongji', NULL, '', _t('<br><span class="themeConfig"><h3>页脚设置</h3></span><div class="themeConfiginfo">所有页面生效设置</div>网站统计代码'), _t('支持HTML'));
     $form->addInput($tongji);
@@ -89,7 +89,7 @@ function themeConfig($form)
         NULL,
         '',
         _t('侧边栏热门标签数量'),
-        _t('不填写则默认显示 5 条')
+        _t('不填写则默认显示 50 条')
     );
     $form->addInput($sidebarTagsLimit);
     $sidebarBlock = new \Typecho\Widget\Helper\Form\Element\Checkbox(
