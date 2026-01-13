@@ -51,22 +51,25 @@ function get_theme_settings_from_db()
 function get_backup_option_prefix()
 {
     $theme = get_current_theme_name();
-    return $theme !== '' ? ('theme_backup:' . $theme . ':') : null;
+    if ($theme === '') {
+        return null;
+    }
+
+    // 使用短的确定性前缀（避免 name 超长导致 DB 插入失败）
+    return 'theme_backup:' . substr(md5($theme), 0, 8) . ':';
 }
 
 function create_db_backup_entry(array $settings)
 {
-    $prefix = get_backup_option_prefix();
-    if (!$prefix) {
+    $db = Db::get();
+    $theme = get_current_theme_name();
+    if ($theme === '') {
         throw new Exception('Unknown theme');
     }
 
-    $db = Db::get();
-    $stamp = date('YmdHis');
-    $name = $prefix . $stamp;
-
+    // payload 保留完整信息
     $payload = [
-        'theme' => get_current_theme_name(),
+        'theme' => $theme,
         'exportedAt' => date('c'),
         'settings' => $settings,
     ];
@@ -75,32 +78,68 @@ function create_db_backup_entry(array $settings)
         throw new Exception('JSON encode failed');
     }
 
-    $db->query(
-        $db->insert('table.options')->rows([
-            'name' => $name,
-            'value' => $json,
-            'user' => 0,
-        ])
-    );
+    // 始终使用短前缀 tbk:，长度尽量短以兼容各种 DB
+    $tries = 0;
+    do {
+        $tries++;
+        $uniq = substr(sha1(microtime(true) . mt_rand()), 0, 10);
+        $name = 'tbk:' . $uniq;
 
-    return $name;
+        try {
+            $db->query(
+                $db->insert('table.options')->rows([
+                    'name' => $name,
+                    'value' => $json,
+                    'user' => 0,
+                ])
+            );
+
+            error_log('[theme-backup] create_db_backup_entry name=' . $name . ' length=' . strlen($name) . ' tries=' . $tries);
+            return $name;
+        } catch (Exception $e) {
+            error_log('[theme-backup] create_db_backup_entry insert failed try=' . $tries . ' name=' . $name . ' error=' . $e->getMessage());
+            // 若失败，缩短 uniq 后重试
+            if ($tries >= 4) break;
+        }
+    } while ($tries < 5);
+
+    // 最终回退为更短的 uniq
+    $finalUniq = substr(sha1(uniqid('', true)), 0, 6);
+    $name = 'tbk:' . $finalUniq;
+    try {
+        $db->query(
+            $db->insert('table.options')->rows([
+                'name' => $name,
+                'value' => $json,
+                'user' => 0,
+            ])
+        );
+        error_log('[theme-backup] create_db_backup_entry final fallback name=' . $name . ' length=' . strlen($name));
+        return $name;
+    } catch (Exception $e) {
+        error_log('[theme-backup] create_db_backup_entry final insert failed: ' . $e->getMessage());
+        throw new Exception('Failed to create backup entry');
+    }
 }
 
 function list_db_backups($limit = 20)
 {
     $prefix = get_backup_option_prefix();
-    if (!$prefix) {
-        return [];
+    $db = Db::get();
+
+    $select = $db->select('name', 'value')
+        ->from('table.options')
+        ->order('name', Db::SORT_DESC)
+        ->limit((int)$limit);
+
+    if ($prefix) {
+        // 兼容旧格式（theme_backup:...）和新短前缀（tbk:...）
+        $select->where('(name LIKE ? OR name LIKE ?)', $prefix . '%', 'tbk:%');
+    } else {
+        $select->where('name LIKE ?', 'tbk:%');
     }
 
-    $db = Db::get();
-    $rows = $db->fetchAll(
-        $db->select('name', 'value')
-            ->from('table.options')
-            ->where('name LIKE ?', $prefix . '%')
-            ->order('name', Db::SORT_DESC)
-            ->limit((int)$limit)
-    );
+    $rows = $db->fetchAll($select);
 
     $items = [];
     foreach ($rows as $row) {
@@ -128,30 +167,57 @@ function list_db_backups($limit = 20)
 
 function get_db_backup_json($name)
 {
-    $prefix = get_backup_option_prefix();
     $name = (string)$name;
-    if (!$prefix || strpos($name, $prefix) !== 0) {
-        return null;
-    }
-
     $db = Db::get();
     $row = $db->fetchRow($db->select('value')->from('table.options')->where('name = ?', $name)->limit(1));
     if (!$row || !isset($row['value'])) {
         return null;
     }
 
-    return (string)$row['value'];
+    $value = (string)$row['value'];
+    $decoded = json_decode($value, true);
+
+    if (is_array($decoded) && isset($decoded['theme'])) {
+        if ($decoded['theme'] !== get_current_theme_name()) {
+            return null;
+        }
+        return $value;
+    }
+
+    // 向后兼容：若 name 使用旧的 theme-specific 前缀，则允许读取
+    $prefix = get_backup_option_prefix();
+    if ($prefix && strpos($name, $prefix) === 0) {
+        return $value;
+    }
+
+    return null;
 }
 
 function delete_db_backup($name)
 {
-    $prefix = get_backup_option_prefix();
     $name = (string)$name;
-    if (!$prefix || strpos($name, $prefix) !== 0) {
+    $db = Db::get();
+
+    $row = $db->fetchRow($db->select('value')->from('table.options')->where('name = ?', $name)->limit(1));
+    if (!$row || !isset($row['value'])) {
         return false;
     }
 
-    $db = Db::get();
+    $value = (string)$row['value'];
+    $decoded = json_decode($value, true);
+
+    // 只删除属于当前主题的备份（兼容旧格式）
+    if (is_array($decoded) && isset($decoded['theme'])) {
+        if ($decoded['theme'] !== get_current_theme_name()) {
+            return false;
+        }
+    } else {
+        $prefix = get_backup_option_prefix();
+        if (!$prefix || strpos($name, $prefix) !== 0) {
+            return false;
+        }
+    }
+
     $db->query($db->delete('table.options')->where('name = ?', $name));
     return true;
 }
@@ -252,7 +318,8 @@ function handle_theme_backup_request()
             $key = create_db_backup_entry($settings);
             Notice::alloc()->set(_t('已保存备份：%s', $key), 'success');
         } catch (Exception $e) {
-            Notice::alloc()->set(_t('保存备份失败：%s', $e->getMessage()), 'error');
+        error_log('[theme-backup] save_db failed: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+        Notice::alloc()->set(_t('保存备份失败：%s', $e->getMessage()), 'error');
         }
 
         header('Location: ' . Common::url('options-theme.php', Helper::options()->adminUrl));
