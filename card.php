@@ -1,7 +1,7 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 <div class="row mr-0 ml-0">
 <?php while ($this->next()):
-$coverImage = getPostCover($this->content, $this->cid);
+$coverImage = getPostThumb($this->content, $this->cid, $this->fields ?? null, 600, 300, 1, 85);
 $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info'];
 ?>
 <article class="block card-plain post-item col-md-6 col-12 post-item-card">
@@ -9,7 +9,7 @@ $colors = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning'
         <div class="thumbnail position-relative"> 
             <a class="t-sm ww" href="<?php $this->permalink() ?>"> 
                 <img title="<?php $this->title() ?>" alt="<?php $this->title() ?>" src='<?php $this->options->themeUrl('assets/img/load.svg'); ?>' 
-                     data-src='<?php echo $coverImage; ?>' class='lazy' />
+                     data-src='<?php echo htmlspecialchars($coverImage, ENT_QUOTES); ?>' class='lazy' />
             </a>
             <div class="post-tags"> 
                 <span class="badge bg-danger"></span>

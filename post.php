@@ -1,15 +1,15 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; 
 $this->need('header.php'); 
 // 计算字数使用纯文本，不影响实际渲染内容
-$plainContent = strip_tags($this->content);
-$wordCount = mb_strlen($plainContent, 'UTF-8');
-$pkPosterExcerptSource = trim((string)preg_replace('/\\s+/u', ' ', $plainContent));
-$pkPosterExcerpt = $pkPosterExcerptSource;
-if (mb_strlen($pkPosterExcerpt, 'UTF-8') > 60) {
-	$pkPosterExcerpt = mb_substr($pkPosterExcerpt, 0, 60, 'UTF-8') . '...';
-}
-$pkLogoUrl = trim((string)($this->options->logoUrl ?? ''));
-?>
+	$plainContent = strip_tags($this->content);
+	$wordCount = mb_strlen($plainContent, 'UTF-8');
+			$pkPosterExcerptSource = trim((string)preg_replace('/\\s+/u', ' ', $plainContent));
+			$pkPosterExcerpt = $pkPosterExcerptSource;
+			if (mb_strlen($pkPosterExcerpt, 'UTF-8') > 60) {
+			    $pkPosterExcerpt = mb_substr($pkPosterExcerpt, 0, 60, 'UTF-8') . '...';
+			}
+				$pkLogoUrl = trim((string)($this->options->logoUrl ?? ''));
+				?>
 <div id="breadcrumb" class="animated fadeInUp">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -77,14 +77,52 @@ if($days > 180){
 	ob_start();
 	$this->content();
 	$content = ob_get_clean();
-	$pkPosterCover = getPostCover($content, $this->cid, $this->fields ?? null);
-	ob_start();
-	$this->title();
-	$pkPosterTitle = trim(ob_get_clean());
-	$pkRewardAlipay = trim((string)($this->options->rewardAlipayQrUrl ?? ''));
-	$pkRewardWx = trim((string)($this->options->rewardWxQrUrl ?? ''));
-	echo parse_shortcodes($content, $this);
-	?>
+		$pkPosterCover = trim((string)getPostCover($content, $this->cid, $this->fields ?? null));
+		ob_start();
+		$this->title();
+		$pkPosterTitle = trim(ob_get_clean());
+		$pkRewardAlipay = trim((string)($this->options->rewardAlipayQrUrl ?? ''));
+		$pkRewardWx = trim((string)($this->options->rewardWxQrUrl ?? ''));
+		$pkNormalizeUrl = function ($raw) {
+		    $raw = trim((string)$raw);
+		    if ($raw === '') return '';
+		    if (preg_match('#^(data|blob):#i', $raw)) return $raw;
+		    if (preg_match('#^https?://#i', $raw)) return $raw;
+			    $site = (string)$this->options->siteUrl;
+			    $site = $site !== '' ? rtrim($site, '/') . '/' : (rtrim((string)($_SERVER['REQUEST_SCHEME'] ?? 'https') . '://' . ($_SERVER['HTTP_HOST'] ?? ''), '/') . '/');
+			    $scheme = parse_url($site, PHP_URL_SCHEME) ?: ($_SERVER['REQUEST_SCHEME'] ?? 'https');
+		    if (str_starts_with($raw, '//')) {
+		        return $scheme . ':' . $raw;
+		    }
+		    if (str_starts_with($raw, '/')) {
+		        return rtrim($site, '/') . $raw;
+		    }
+		    // Looks like a bare host/path (e.g. images.example.com/a.webp)
+		    if (preg_match('#^[a-z0-9.-]+\\.[a-z]{2,}(/|$)#i', $raw)) {
+		        return $scheme . '://' . $raw;
+		    }
+		    return rtrim($site, '/') . '/' . ltrim($raw, '/');
+		};
+		$pkPosterCover = $pkNormalizeUrl($pkPosterCover);
+		$pkLogoUrl = $pkNormalizeUrl($pkLogoUrl);
+
+			// Don't use ?? here: Typecho options may expose URLs via magic getters and isset() can be false.
+			$pkThemeBase = trim((string)$this->options->themeUrl);
+			$pkTimthumbBase = $pkNormalizeUrl(rtrim($pkThemeBase, '/') . '/timthumb.php');
+			$pkSiteUrl = (string)$this->options->siteUrl;
+
+		$pkPosterCoverForPoster = $pkPosterCover;
+		if ($pkPosterCoverForPoster !== '' && function_exists('puock_timthumb_is_remote_url') && puock_timthumb_is_remote_url($pkPosterCoverForPoster, $pkSiteUrl)) {
+		    $pkPosterCoverForPoster = puock_timthumb_build_url($pkTimthumbBase, $pkPosterCoverForPoster, 640, 320, 1, 90);
+		}
+
+		$pkLogoUrlForPoster = $pkLogoUrl;
+		if ($pkLogoUrlForPoster !== '' && function_exists('puock_timthumb_is_remote_url') && puock_timthumb_is_remote_url($pkLogoUrlForPoster, $pkSiteUrl)) {
+		    $pkLogoUrlForPoster = puock_timthumb_build_url($pkTimthumbBase, $pkLogoUrlForPoster, 260, 0, 0, 90);
+		}
+
+		echo parse_shortcodes($content, $this);
+		?>
 </div>
 <div class="t-separator c-sub t-sm mt30">正文完</div>
 <div class="footer-info puock-text mt20">
@@ -142,12 +180,13 @@ if($days > 180){
 			                aria-label="海报"
 				                data-poster-title="<?php echo htmlspecialchars($pkPosterTitle); ?>"
 				                data-poster-excerpt="<?php echo htmlspecialchars($pkPosterExcerpt); ?>"
-				                data-poster-cover="<?php echo htmlspecialchars($pkPosterCover); ?>"
+				                data-poster-cover="<?php echo htmlspecialchars($pkPosterCoverForPoster); ?>"
 				                data-poster-cover-default="<?php $this->options->themeUrl('assets/img/cover.png'); ?>"
-				                data-poster-logo="<?php echo htmlspecialchars($pkLogoUrl); ?>"
+				                data-poster-logo="<?php echo htmlspecialchars($pkLogoUrlForPoster); ?>"
+				                data-poster-img-proxy="0"
 				            >
-				<i class="fa-regular fa-images"></i>
-				</div>
+				                <i class="fa-regular fa-images"></i>
+				            </div>
 			    <div class="circle-button puock-bg text-center share-modal-open" title="分享" aria-label="分享" role="button" tabindex="0">
 			    <i class="fa fa-share-from-square t-md"></i>
 		    </div>
@@ -170,7 +209,7 @@ if($days > 180){
         <div class="row puock-text post-relevant"> 
             <?php while ($relatedPosts->next()): ?> 
             <a href="<?php $relatedPosts->permalink(); ?>" class="col-6 col-md-3 post-relevant-item ww"> 
-                <div style="background:url('<?php echo getPostCover($relatedPosts->content, $relatedPosts->cid); ?>')">
+                <div style="background:url('<?php echo htmlspecialchars(getPostThumb($relatedPosts->content, $relatedPosts->cid, $relatedPosts->fields ?? null, 600, 400, 1, 85), ENT_QUOTES); ?>')">
                     <div class="title"> <?php $relatedPosts->title(); ?></div>
                 </div>
             </a> 

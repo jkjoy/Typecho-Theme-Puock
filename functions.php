@@ -9,6 +9,7 @@ if (!defined('__TYPECHO_ADMIN__') && !headers_sent()) {
 // 加载核心模块
 require_once __DIR__ . '/inc/core.php';
 require_once __DIR__ . '/inc/setttings.php';
+require_once __DIR__ . '/inc/timthumb-util.php';
 require_once __DIR__ . '/inc/shortcodes.php';
 require_once __DIR__ . '/inc/editor.php';
 require_once __DIR__ . '/inc/comments.php';

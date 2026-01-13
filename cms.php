@@ -12,11 +12,11 @@
         </div>
         <?php 
         $this->widget('Widget_Archive@category_' . $categories->mid, 'pageSize=5&type=category', 'mid=' . $categories->mid)->to($posts);
-        if($posts->have()):$postCount = 0;while($posts->next()):$postCount++;$coverImage = getPostCover($posts->content, $posts->cid);if($postCount === 1): ?>
+        if($posts->have()):$postCount = 0;while($posts->next()):$postCount++;$coverImage = getPostThumb($posts->content, $posts->cid, $posts->fields ?? null, 240, 160, 1, 85);if($postCount === 1): ?>
         <!-- 第一篇文章使用特殊样式 -->
         <div class="mtb10 magazine-media-item"> 
             <a class="img ww" href="<?php $posts->permalink() ?>"> 
-                <img alt="<?php $posts->title() ?>" src='<?php echo $coverImage; ?>' height="80" width="120"/> 
+                <img alt="<?php $posts->title() ?>" src='<?php echo htmlspecialchars($coverImage, ENT_QUOTES); ?>' height="80" width="120"/> 
             </a>
             <div class="t-line-1">
                 <h2 class="t-lg t-line-1">

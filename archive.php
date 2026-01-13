@@ -15,12 +15,12 @@ $this->need('header.php');
 <?php if ($this->options->listmodel): ?>
 <div class=" mr-0 ml-0">  
 <?php while ($this->next()):
-$coverImage = getPostCover($this->content, $this->cid);
+$coverImage = getPostThumb($this->content, $this->cid, $this->fields ?? null, 400, 300, 1, 85);
 ?>
 <article class="block card-plain post-item p-block post-item-list">
 <div class="thumbnail"> 
 <a class="t-sm ww" href="<?php $this->permalink() ?>"> 
-<img title="<?php $this->title() ?>" alt="<?php $this->title() ?>" src='<?php $this->options->themeUrl('assets/img/load.svg'); ?>' class='lazy' data-src='<?php echo $coverImage; ?>' /> 
+<img title="<?php $this->title() ?>" alt="<?php $this->title() ?>" src='<?php $this->options->themeUrl('assets/img/load.svg'); ?>' class='lazy' data-src='<?php echo htmlspecialchars($coverImage, ENT_QUOTES); ?>' /> 
 </a> 
 </div>
 <div class="post-info">

@@ -392,20 +392,75 @@ class Puock {
             const excerpt = (trigger.data("poster-excerpt") || "").toString().trim();
             const coverRaw = (trigger.data("poster-cover") || "").toString().trim();
             const coverDefault = (trigger.data("poster-cover-default") || "").toString().trim();
-            const cover = coverRaw || coverDefault;
             const logo = (trigger.data("poster-logo") || "").toString().trim();
             const url = (window.location.href || "").split("#")[0];
 
             const dataId = (typeof window.SparkMD5 !== "undefined" && window.SparkMD5.hash) ? window.SparkMD5.hash("poster|" + url + "|" + title) : String(Date.now());
             const posterUid = "pk-poster-" + dataId;
             const qrUid = "pk-poster-qr-" + dataId;
-            const logoHtml = logo ? `<img class="logo" crossorigin="anonymous" src="${logo}" alt="logo">` : "";
+            const coverImgUid = "pk-poster-cover-" + dataId;
+            const coverBoxUid = "pk-poster-coverbox-" + dataId;
+            const logoImgUid = "pk-poster-logo-" + dataId;
+
+            const toAbsHref = (val) => {
+                try {
+                    if (!val) return "";
+                    return new URL(String(val), window.location.href).href;
+                } catch (err) {
+                    return "";
+                }
+            };
+
+            const normalizeSameHostScheme = (href) => {
+                try {
+                    if (!href) return "";
+                    const u = new URL(href);
+                    if (u.host === window.location.host && u.protocol !== window.location.protocol) {
+                        u.protocol = window.location.protocol;
+                        return u.href;
+                    }
+                    return href;
+                } catch (err) {
+                    return href || "";
+                }
+            };
+
+            const isSameOrigin = (href) => {
+                try {
+                    if (!href) return false;
+                    return new URL(href).origin === window.location.origin;
+                } catch (err) {
+                    return false;
+                }
+            };
+
+            const coverRawHref = normalizeSameHostScheme(toAbsHref(coverRaw));
+            const coverDefaultHref = normalizeSameHostScheme(toAbsHref(coverDefault));
+            let cover = "";
+            if (coverRawHref) {
+                if (isSameOrigin(coverRawHref)) {
+                    cover = coverRawHref;
+                } else {
+                    cover = coverDefaultHref;
+                    if (coverDefaultHref) this.toast("海报封面图片跨域，已使用默认封面", TYPE_WARNING);
+                }
+            }
+            if (!cover) cover = coverDefaultHref;
+
+            const logoHref = normalizeSameHostScheme(toAbsHref(logo));
+            let logoSrc = "";
+            if (logoHref) {
+                if (isSameOrigin(logoHref)) {
+                    logoSrc = logoHref;
+                }
+            }
+            const logoHtml = logoSrc ? `<img class="logo" id="${logoImgUid}" crossorigin="anonymous" referrerpolicy="no-referrer" src="${logoSrc}" alt="logo">` : "";
 
             const html = `
 <div class="post-poster">
   <div class="post-poster-main" id="${posterUid}">
-    <div class="cover">
-      <img crossorigin="anonymous" src="${cover || ""}" alt="poster">
+    <div class="cover" id="${coverBoxUid}">
+      <img id="${coverImgUid}" crossorigin="anonymous" referrerpolicy="no-referrer" src="${cover || ""}" alt="poster">
     </div>
     <div class="content">
       <p class="title mt20 fs16"></p>
@@ -449,6 +504,47 @@ class Puock {
                 this.toast("二维码组件未加载", TYPE_WARNING);
             }
 
+            const waitImgStatus = (imgEl, timeoutMs = 3500) => {
+                if (!imgEl) return Promise.resolve("error");
+                if (!imgEl.getAttribute("src")) return Promise.resolve("error");
+                if (imgEl.complete) return Promise.resolve(imgEl.naturalWidth > 0 ? "loaded" : "error");
+                return new Promise((resolve) => {
+                    let done = false;
+                    const finish = (status) => {
+                        if (done) return;
+                        done = true;
+                        imgEl.onload = null;
+                        imgEl.onerror = null;
+                        clearTimeout(t);
+                        resolve(status);
+                    };
+                    const t = setTimeout(() => finish("timeout"), timeoutMs);
+                    imgEl.onload = () => finish("loaded");
+                    imgEl.onerror = () => finish("error");
+                });
+            };
+
+            const ensureCoverOk = async () => {
+                const coverImg = document.getElementById(coverImgUid);
+                const coverBox = document.getElementById(coverBoxUid);
+                if (!coverImg || !coverBox) return;
+                const st = await waitImgStatus(coverImg, 3500);
+                if (st === "loaded" || st === "timeout") return;
+                if (coverDefaultHref && coverImg.src !== coverDefaultHref) {
+                    coverImg.src = coverDefaultHref;
+                    const st2 = await waitImgStatus(coverImg, 3500);
+                    if (st2 === "loaded") return;
+                }
+                coverBox.style.display = "none";
+            };
+
+            const ensureLogoOk = async () => {
+                const logoImg = document.getElementById(logoImgUid);
+                if (!logoImg) return;
+                const st = await waitImgStatus(logoImg, 3500);
+                if (st === "error") logoImg.remove();
+            };
+
             const loading = this.startLoading();
             try {
                 const node = document.getElementById(posterUid);
@@ -456,7 +552,9 @@ class Puock {
                     this.toast("html2canvas 未加载", TYPE_DANGER);
                     return;
                 }
-                await this.waitImagesLoaded(node, 3500);
+                await ensureCoverOk();
+                await ensureLogoOk();
+                await this.waitImagesLoaded(node, 8000);
                 const canvas = await window.html2canvas(node, {
                     allowTaint: true,
                     useCORS: true,
@@ -992,7 +1090,11 @@ class Puock {
                     el.attr("id", "hljs-item-" + index)
                     el.before("<div class='pk-code-tools' data-pre-id='hljs-item-" + index + "'><div class='dot'>" +
                         "<i></i><i></i><i></i></div><div class='actions'><div><i class='i fa fa-copy cp-code' data-clipboard-target='#hljs-item-" + index + "'></i></div></div></div>")
-                    window.hljs.highlightBlock(block);
+                    if (window.hljs.highlightElement) {
+                        window.hljs.highlightElement(block);
+                    } else {
+                        window.hljs.highlightBlock(block);
+                    }
                     window.hljs.lineNumbersBlock(block);
                 }
             });

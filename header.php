@@ -77,22 +77,12 @@
     <?php if ($this->options->icoUrl): ?>
     <link rel="icon" href="<?php $this->options->icoUrl() ?>" sizes="32x32" />
     <link rel="apple-touch-icon" href="<?php $this->options->icoUrl() ?>" />
-	    <?php endif; ?>
-	    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.lite.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
-	    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/highlight.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
-	    <script src='<?php $this->options->themeUrl('assets/js/jquery.min.js'); ?>?ver=<?php echo get_theme_version(); ?>' type="text/javascript"></script>
-	    <!-- 通过自有函数输出HTML头部信息 -->
-	    <?php $this->header(); ?>
-	    <style id="puock-comment-indent-cap">
-        @media (max-width: 767px) {
-            #post-comments .comment-list .children{padding-left:30px!important}
-            #post-comments .comment-list .children .children{padding-left:30px!important}
-            #post-comments .comment-list .children .children .children{padding-left:0!important}
-            #post-comments ol.comment-list .comment-children ol.comment-list{padding-left:30px!important}
-            #post-comments ol.comment-list .comment-children .comment-children ol.comment-list{padding-left:30px!important}
-            #post-comments ol.comment-list .comment-children .comment-children .comment-children ol.comment-list{padding-left:0!important}
-        }
-    </style>
+	<?php endif; ?>
+	<link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.lite.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
+	<link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/highlight.css'); ?>?ver=<?php echo get_theme_version(); ?>" type="text/css" media="all" />
+	<script src='<?php $this->options->themeUrl('assets/js/jquery.min.js'); ?>?ver=<?php echo get_theme_version(); ?>' type="text/javascript"></script>
+	<!-- 通过自有函数输出HTML头部信息 -->
+	<?php $this->header(); ?>
 </head>
 <body class="puock-auto custom-background">
     <div>
