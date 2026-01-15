@@ -18891,3 +18891,6 @@ a:not(.btn):hover {
 #post-comments ol.comment-list .comment-children .comment-children ol.comment-list{padding-left:30px!important}
 #post-comments ol.comment-list .comment-children .comment-children .comment-children ol.comment-list{padding-left:0!important}
 }
+.hidden {
+  display: none !important;
+}
