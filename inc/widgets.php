@@ -29,6 +29,8 @@ function get_site_statistics() {
     $avatar = rtrim($cnavatar, '/') . '/' . $hash . '?s=80&d=identicon';
     
     // 其余统计信息保持不变
+    $totalWords = $db->fetchObject($db->select('SUM(LENGTH(text)) AS wordCount')->from('table.contents')->where('type = ?', 'post')->where('status = ?', 'publish'))->wordCount;
+    $tagsCount = $db->fetchObject($db->select(array('COUNT(*)' => 'num'))->from('table.metas')->where('type = ?', 'tag'))->num;
     $userCount = $db->fetchObject($db->select(array('COUNT(*)' => 'num'))->from('table.users'))->num;
     $postCount = $db->fetchObject($db->select(array('COUNT(*)' => 'num'))->from('table.contents')->where('type = ?', 'post')->where('status = ?', 'publish'))->num;
     $commentCount = $db->fetchObject($db->select(array('COUNT(*)' => 'num'))->from('table.comments'))->num;
@@ -38,13 +40,15 @@ function get_site_statistics() {
     if ($totalViews === null) $totalViews = 0;
     
     return [
-        'email' => $email,
-        'nickname' => $nickname,
-        'avatar' => $avatar,
-        'userCount' => $userCount,
-        'postCount' => $postCount,
-        'commentCount' => $commentCount,
-        'totalViews' => $totalViews,
+        'email' => $email, // 邮箱
+        'nickname' => $nickname, // 昵称
+        'avatar' => $avatar, // 头像URL
+        'userCount' => $userCount, // 用户总数
+        'postCount' => $postCount,// 文章总数
+        'commentCount' => $commentCount, // 评论总数
+        'totalViews' => $totalViews, // 文章总浏览量
+        'tagsCount' => $tagsCount, // 标签总数
+        'totalWords' => $totalWords, // 文章总字数
         'isLogin' => $currentUser->hasLogin() // 添加一个是否登录的标志
     ];
 }
