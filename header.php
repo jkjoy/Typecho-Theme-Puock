@@ -56,16 +56,21 @@
 	        })();
 	    </script>
     <meta http-equiv='content-language' content='zh_CN'>
-    <title><?php $this->archiveTitle([
-            'category' => _t('分类 %s 下的文章'),
-            'search'   => _t('包含关键字 %s 的文章'),
-            'tag'      => _t('标签 %s 下的文章'),
-            'author'   => _t('%s 发布的文章')
-        ], '', ' - ');
-        $this->options->title();
-        if ($this->is('index')) echo ' - ';
-        if ($this->is('index')) 
-        $this->options->description() ?>
+    <title>
+        <?php if (!empty($GLOBALS['puock_goto_active'])):
+        echo htmlspecialchars((string)($GLOBALS['puock_goto_title'] ?? '即将离开本站'), ENT_QUOTES, 'UTF-8'); ?> 
+        - 
+        <?php $this->options->title();else:
+            $this->archiveTitle([
+                'category' => _t('分类 %s 下的文章'),
+                'search'   => _t('包含关键字 %s 的文章'),
+                'tag'      => _t('标签 %s 下的文章'),
+                'author'   => _t('%s 发布的文章')
+            ], '', ' - ');
+            $this->options->title();
+            if ($this->is('index')) echo ' - ';
+            if ($this->is('index'))
+                $this->options->description();endif; ?>
     </title>
     <link rel="canonical" href="<?php $this->options->siteUrl(); ?>">
     <meta name='robots' content='max-image-preview:large' />

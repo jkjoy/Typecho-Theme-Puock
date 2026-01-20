@@ -1,11 +1,11 @@
 <?php
 /**
- * Pouck theme for Typecho
+ * Puock theme for Typecho
  * 老孙移植
  * 
- * @package Typecho Pouck Theme
+ * @package Typecho Puock Theme
  * @author 老孙博客
- * @version 1.4.2
+ * @version 1.4.3
  * @link http://www.imsun.org
  */
 

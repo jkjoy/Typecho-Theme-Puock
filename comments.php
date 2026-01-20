@@ -206,7 +206,22 @@
         <div class="ml-2 two-info">
             <div class="puock-text ta3b">
                 <span class="t-md puock-links">
-                    <?php $comments->author(); ?>
+                    <?php
+                    $authorName = (string)($comments->author ?? '');
+                    $authorName = $authorName !== '' ? $authorName : '匿名用户';
+                    $authorNameEsc = htmlspecialchars($authorName, ENT_QUOTES, 'UTF-8');
+
+                    $authorUrl = trim((string)($comments->url ?? ''));
+                    if ($authorUrl !== '' && function_exists('puock_is_external_url') && function_exists('puock_go_build_url') && puock_is_external_url($authorUrl)) {
+                        $authorUrl = puock_go_build_url($authorUrl);
+                    }
+
+                    if ($authorUrl !== '') {
+                        echo '<a href="' . htmlspecialchars($authorUrl, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener noreferrer nofollow">' . $authorNameEsc . '</a>';
+                    } else {
+                        echo $authorNameEsc;
+                    }
+                    ?>
                 </span>
                 <?php $commentApprove = commentApprove($comments, $comments->mail);if ($comments->authorId === $comments->ownerId): ?>
                 <span class="t-sm text-danger">
@@ -226,7 +241,16 @@
     </div>
     <div class="content">
         <div class="content-text t-md mt10 puock-text">
-             <?php if ($comments->parent) {echo getPermalinkFromCoid($comments->parent);} echo parse_smiley_shortcode($comments->content);?>
+             <?php
+             if ($comments->parent) {
+                 echo getPermalinkFromCoid($comments->parent);
+             }
+             $commentHtml = parse_smiley_shortcode($comments->content);
+             if (function_exists('puock_rewrite_external_links_to_go')) {
+                 $commentHtml = puock_rewrite_external_links_to_go($commentHtml);
+             }
+             echo $commentHtml;
+             ?>
             <div class="comment-os c-sub">
             <?php
             $deviceInfo = getBrowsersInfo($comments->agent);

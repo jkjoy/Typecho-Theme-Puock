@@ -1,9 +1,9 @@
-<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
-<?php if ($this->is('index')): ?>
-<?php if ($this->options->cmsmodel): ?>
-<?php $this->need('cms.php'); ?>
-<?php endif; ?>
-<?php if ($this->options->friendlink): ?>
+<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit;
+if ($this->is('index')):
+if ($this->options->cmsmodel): 
+$this->need('cms.php'); 
+endif;
+if ($this->options->friendlink): ?>
 <div class="p-block index-links">
 <div> 
 <span class="t-lg puock-text pb-2 d-inline-block border-bottom border-primary"> 
@@ -16,8 +16,7 @@
 ',0,'home'); ?>
 </div>
 </div>
-<?php endif; ?>
-<?php endif; ?>
+<?php endif;endif; ?>
  <!--全局下方-->
 <?php if($this->options->adlistfoot): ?>
 <div class="puock-text p-block t-md ad-global-bottom"><?php $this->options->adlistfoot(); ?></div>
@@ -40,47 +39,49 @@
     <div data-to="top" class="p-block"><i class="fa fa-arrow-up puock-text"></i></div> 
     <div data-to="bottom" class="p-block"><i class="fa fa-arrow-down puock-text"></i></div>
 </div>
-        <footer id="footer">
-            <div class="container">
-                <div class="row row-cols-md-1">
-                    <div class="col-md-6">
-                        <?php if($this->options->footerinfo): ?>
-                        <div><span class="t-md pb-2 d-inline-block border-bottom border-primary"><i class="fa-regular fa-bell"></i> 联系我们</span> </div>
-                        <p class="mt20 t-md"> 
-                            <?php $this->options->footerinfo(); ?>
-                        </p>
-                    </div>
-                    <?php endif; ?>
-                    <div class="col-md-6">
-                        <?php if($this->options->footercopyright): ?>
-                        <div><span class="t-md pb-2 d-inline-block border-bottom border-primary"><i class="fa-regular fa-copyright"></i> 版权说明</span> </div>
-                        <p class="mt20 t-md">
-                            <?php $this->options->footercopyright(); ?>
-                        </p>
-                    </div>
-                    <?php endif; ?>
+<footer id="footer">
+    <div class="container">
+        <div class="row row-cols-md-1">
+            <div class="col-md-6">
+                <?php if($this->options->footerinfo): ?>
+                <div>
+                    <span class="t-md pb-2 d-inline-block border-bottom border-primary"><i class="fa-regular fa-bell"></i> 联系我们</span> </div>
+                    <p class="mt20 t-md"> 
+                        <?php $this->options->footerinfo(); ?>
+                    </p>
                 </div>
+                <?php endif; ?>
+                <div class="col-md-6">
+                    <?php if($this->options->footercopyright): ?>
+                <div>
+                <span class="t-md pb-2 d-inline-block border-bottom border-primary"><i class="fa-regular fa-copyright"></i> 版权说明</span> </div>
+                <p class="mt20 t-md">
+                    <?php $this->options->footercopyright(); ?>
+                </p>
             </div>
-            <div class="mt20 text-center t-md">
-                <div class="info"> 
-                    <p><?php $this->options->tongji(); ?></p>
-                    <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" title="备案信息"><?php $this->options->ICP(); ?></a>
-                &copy; <?php echo date('Y'); ?> <a href="<?php $this->options->siteUrl(); ?>" title="<?php $this->options->title(); ?>"><?php $this->options->title(); ?></a>
-                    <div class="fs12 mt10 c-sub"> 
-                        <span>  &nbsp;Theme by 
-                            <a target="_blank" class="c-sub" title="Puock v<?php echo get_theme_version(); ?>" href="https://github.com/jkjoy/typecho-theme-puock">Puock</a> 
-                        </span> 
-                        <span>  &nbsp;Powered by 
-                            <a target="_blank" class="c-sub" title="Typecho" href="https://typecho.org">Typecho</a> 
-                            <p class="hidden"><a target="_blank" class="c-sub" title="老孙博客" href="https://imsun.org">老孙博客</a>制作</p>
-                        </span>
-                    </div>
-                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="mt20 text-center t-md">
+        <div class="info"> 
+            <p><?php $this->options->tongji(); ?></p>
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" title="备案信息"><?php $this->options->ICP(); ?></a>
+                &copy; <?php echo date('Y'); ?> <?php $this->options->title(); ?>
+            <div class="fs12 mt10 c-sub"> 
+                <span>  &nbsp;Theme by 
+                    <a target="_blank" class="c-sub" title="Puock v<?php echo get_theme_version(); ?>" href="https://github.com/jkjoy/typecho-theme-puock">Puock</a> 
+                </span> 
+                <span>  &nbsp;Powered by 
+                    <a target="_blank" class="c-sub" title="Typecho" href="https://typecho.org">Typecho</a> 
+                    <p class="hidden"><a target="_blank" class="c-sub" title="老孙博客" href="https://imsun.org">老孙博客</a>制作</p>
+                </span>
             </div>
+        </div>
     </div>
-    </footer>
     </div>
-    <div id="gt-validate-box"></div>
+</footer>
+</div>
+<div id="gt-validate-box"></div>
     <script data-instant>
         var puock_metas = {
             "home": "<?php $this->options->siteUrl(); ?>",
@@ -129,7 +130,7 @@
 	            }
 	        });
 	    </script>
-	    <?php endif; ?>
-	    <?php $this->footer(); ?>
-	</body>
-	</html>
+	<?php endif; ?>
+	<?php $this->footer(); ?>
+</body>
+</html>

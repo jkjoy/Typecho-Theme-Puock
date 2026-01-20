@@ -34,7 +34,10 @@ $this->need('header.php');
             function threadedComments($comments, $options) {
                 $mail = $comments->mail;
                 $mailHash = md5(strtolower(trim($mail)));
-                $purl = $comments->url;
+                $purl = (string)$comments->url;
+                if (function_exists('puock_is_external_url') && function_exists('puock_go_build_url') && puock_is_external_url($purl)) {
+                    $purl = puock_go_build_url($purl);
+                }
                 $nickname = $comments->author;
                 $cnavatar = Helper::options()->cnavatar ? Helper::options()->cnavatar : 'https://cravatar.cn/avatar/';
                 $avatarurl = rtrim($cnavatar, '/') . '/' . $mailHash . '?s=80&d=identicon';
@@ -43,7 +46,7 @@ $this->need('header.php');
                 <div class="mb20 puock-text moments-item">
                     <div class="row">
                         <div class="col-12 col-md-1">
-                             <a class="meta ta3" href="<?php echo $purl; ?>" target="_blank">
+                             <a class="meta ta3" href="<?php echo htmlspecialchars($purl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank">
                                 <div class="avatar mb10">
                                     <img src='<?php echo $loadingImg; ?>'
                                         class='lazy md-avatar mt-1'
@@ -56,7 +59,16 @@ $this->need('header.php');
                         <div class="col-12 col-md-11">
                             <div class="p-block moment-content-box"> <span class="al"></span>
                                 <div class="mt10 moment-content entry-content show-link-icon">
-                                    <?php if ($comments->parent) {echo getPermalinkFromCoid($comments->parent);} echo parse_smiley_shortcode($comments->content);?>
+                                    <?php
+                                    if ($comments->parent) {
+                                        echo getPermalinkFromCoid($comments->parent);
+                                    }
+                                    $momentHtml = parse_smiley_shortcode($comments->content);
+                                    if (function_exists('puock_rewrite_external_links_to_go')) {
+                                        $momentHtml = puock_rewrite_external_links_to_go($momentHtml);
+                                    }
+                                    echo $momentHtml;
+                                    ?>
                                 </div>
                                 <div class="mt10 moment-footer p-flex-s-right"> 
                                     <span class="t-sm c-sub">

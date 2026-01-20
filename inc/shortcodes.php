@@ -558,7 +558,14 @@ function parse_shortcodes($content, $widget = null) {
     $content = VideoParser::parseContent($content);
     // 直接调用短代码解析,不再进行 Markdown 转换
     if (class_exists('ContentFilter')) {
-        return ContentFilter::applyShortcodesOnly($content, $widget);
+        $content = ContentFilter::applyShortcodesOnly($content, $widget);
+        if (function_exists('puock_rewrite_external_links_to_go')) {
+            $content = puock_rewrite_external_links_to_go($content);
+        }
+        return $content;
+    }
+    if (function_exists('puock_rewrite_external_links_to_go')) {
+        $content = puock_rewrite_external_links_to_go($content);
     }
     return $content;
 }
