@@ -116,8 +116,7 @@ if ($this->options->friendlink): ?>
 	        \Typecho\Cookie::delete('__typecho_notice_type');
 	        \Typecho\Cookie::delete('__typecho_notice_highlight');
 	    }
-	    ?>
-	    <?php if (!empty($pkNotices)): ?>
+	    if (!empty($pkNotices)): ?>
 	    <script data-no-instant>
 	        jQuery(function () {
 	            var msgs = <?php echo json_encode($pkNotices, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
@@ -130,7 +129,6 @@ if ($this->options->friendlink): ?>
 	            }
 	        });
 	    </script>
-	<?php endif; ?>
-	<?php $this->footer(); ?>
+	<?php endif; $this->footer(); ?>
 </body>
 </html>
