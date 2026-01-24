@@ -17922,7 +17922,10 @@ a:not(.btn):hover {
   align-items: center;
 }
 #post-comments .comment-list .post-comment .hide-info {
-  display: none;
+  display: inline-block;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 #post-comments .comment-list .post-comment pre {
   font-size: 14px;
@@ -17957,7 +17960,8 @@ a:not(.btn):hover {
 }
 #post-comments .comment-list .post-comment:hover .hide-info,
 #post-comments .comment-list .post-comment .hide-info-show {
-  display: inline-block;
+  visibility: visible;
+  opacity: 1;
 }
 .pagination a,
 .pagination .page-numbers,
@@ -18877,11 +18881,15 @@ a:not(.btn):hover {
   align-items: center;
 }
 #post-comments ol.comment-list li.post-comment .hide-info {
-  display: none;
+  display: inline-block;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 #post-comments ol.comment-list li.post-comment:hover .hide-info,
 #post-comments ol.comment-list li.post-comment .hide-info-show {
-  display: inline-block;
+  visibility: visible;
+  opacity: 1;
 }
 @media (max-width: 767px) {
 #post-comments .comment-list .children{padding-left:30px!important}

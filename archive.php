@@ -65,7 +65,7 @@ $coverImage = getPostThumb($this->content, $this->cid, $this->fields ?? null, 40
 </article>  
 <?php endwhile; ?>
 </div>
-<div class="mt20 p-flex-s-right" data-no-instant>
+<div class="mt20 p-flex-s-right">
 <?php $this->pageNav('&laquo;', '&raquo;', 1, '...', array(
                 'wrapTag' => 'ul',
                 'wrapClass' => 'pagination comment-ajax-load',
