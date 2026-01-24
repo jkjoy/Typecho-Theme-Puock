@@ -43,8 +43,19 @@ class Puock {
     // 全局一次加载或注册的事件
     onceInit() {
         this.pageInit()
-        $(document).on("click", ".fancybox", () => {
-            return false;
+        $(document).on("click", ".fancybox", (e) => {
+            if (e && e.preventDefault) e.preventDefault();
+        });
+        $(document).on("click", ".entry-content a", (e) => {
+            if (this.data.params.off_img_viewer) return;
+            const a = e.currentTarget;
+            if (!a || !a.querySelector) return;
+            if (!a.querySelector("img")) return;
+            const href = (a.getAttribute("href") || "").trim();
+            if (!href) return;
+            const isImageHref = /(\.(?:avif|bmp|gif|jpe?g|png|svg|webp))(?:[?#].*)?$/i.test(href) || /^(?:data|blob):/i.test(href);
+            if (!isImageHref) return;
+            if (e && e.preventDefault) e.preventDefault();
         });
         $(document).on("click", "#rb-float-actions>div", (e) => {
             const el = $(this.ct(e));
@@ -296,6 +307,11 @@ class Puock {
     pageLinkBlankOpenInit() {
         if (this.data.params.link_blank_open) {
             $(".entry-content").find("a").each((_, item) => {
+                if (item && item.querySelector && item.querySelector("img")) {
+                    const href = (item.getAttribute('href') || '').trim();
+                    const isImageHref = /(\.(?:avif|bmp|gif|jpe?g|png|svg|webp))(?:[?#].*)?$/i.test(href) || /^(?:data|blob):/i.test(href);
+                    if (isImageHref) return;
+                }
                 $(item).attr('target', 'blank')
             })
         }
@@ -857,7 +873,6 @@ class Puock {
 
     loadParams() {
         this.data.params = puock_metas;
-        //this.data.commentVd = this.data.params.vd_comment === 'on';
     }
 
     initReadProgress() {
@@ -885,19 +900,26 @@ class Puock {
         this.pageLinkBlankOpenInit()
         this.initGithubCard();
         this.keyUpHandle();
-     //   this.loadHitokoto();
-    //    this.asyncCacheViews();
         this.swiperInit();
-     //   this.validateInit();
         this.rippleInit();
         if (this.data.params.use_post_menu) {
             this.generatePostMenuHTML()
         }
         this.tooltipInit()
         if(!this.data.params.off_img_viewer){
-            jQuery(".entry-content").viewer({
+            const entryContent = jQuery(".entry-content");
+            entryContent.viewer('destroy');
+            entryContent.viewer({
                 navbar: false,
-                url: this.data.params.main_lazy_img ? 'data-src' : 'src'
+                url: (image) => {
+                    if (!image || !image.getAttribute) return '';
+                    const src = (image.getAttribute('src') || '').trim();
+                    const dataSrc = (image.getAttribute('data-src') || '').trim();
+                    if (this.data.params.main_lazy_img) {
+                        return dataSrc || src;
+                    }
+                    return src || dataSrc;
+                }
             });
         }
         const cp = new ClipboardJS('.pk-copy', {
@@ -1760,4 +1782,3 @@ jQuery(() => {
         window.Puock.onceInit()
     }
 )
-
