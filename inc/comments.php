@@ -66,10 +66,11 @@ if (!class_exists('XdbSearcherTheme')) {
 function getIp2regionSearcher() {
     static $searcher = null;
     if ($searcher === null) {
-        $dbPath = __DIR__ . '/ip2region/ip2region.xdb';
+        $dbPath = __DIR__ . '/ip2region/ip2region_v4.xdb';
         $cBuff = XdbSearcherTheme::loadContentFromFile($dbPath);
         if ($cBuff === null) {
-            error_log("无法加载 ip2region.xdb");
+            $dbName = basename($dbPath);
+            error_log("无法加载 " . $dbName);
             return null;
         }
         try {
@@ -80,6 +81,75 @@ function getIp2regionSearcher() {
         }
     }
     return $searcher;
+}
+
+// 单例方式加载 ip2region_v6.xdb 到内存
+function getIp2regionV6Buffer() {
+    static $buffer = null;
+    if ($buffer === null) {
+        $dbPath = __DIR__ . '/ip2region/ip2region_v6.xdb';
+        if (!is_file($dbPath)) {
+            error_log("无法加载 ip2region_v6.xdb");
+            return null;
+        }
+        $buffer = XdbSearcherTheme::loadContentFromFile($dbPath);
+        if ($buffer === null) {
+            error_log("无法加载 ip2region_v6.xdb");
+            return null;
+        }
+    }
+    return $buffer;
+}
+
+function ip2regionSearchV6($ip) {
+    $buffer = getIp2regionV6Buffer();
+    if ($buffer === null) return null;
+
+    $packed = inet_pton($ip);
+    if ($packed === false || strlen($packed) !== 16) return null;
+
+    $il0 = ord($packed[0]);
+    $il1 = ord($packed[1]);
+    $idx = ($il0 * XdbSearcherTheme::VectorIndexCols * XdbSearcherTheme::VectorIndexSize)
+        + ($il1 * XdbSearcherTheme::VectorIndexSize);
+    $base = XdbSearcherTheme::HeaderInfoLength;
+
+    $sPtr = unpack('V', substr($buffer, $base + $idx, 4))[1];
+    $ePtr = unpack('V', substr($buffer, $base + $idx + 4, 4))[1];
+    if ($sPtr == 0 && $ePtr == 0) return null;
+
+    $segSize = 38;
+    $l = 0;
+    $h = (int)(($ePtr - $sPtr) / $segSize);
+    while ($l <= $h) {
+        $m = ($l + $h) >> 1;
+        $p = $sPtr + $m * $segSize;
+        $rec = substr($buffer, $p, $segSize);
+        if (strlen($rec) !== $segSize) {
+            break;
+        }
+
+        $sip = substr($rec, 0, 16);
+        if (strcmp($packed, $sip) < 0) {
+            $h = $m - 1;
+            continue;
+        }
+
+        $eip = substr($rec, 16, 16);
+        if (strcmp($packed, $eip) > 0) {
+            $l = $m + 1;
+            continue;
+        }
+
+        $dataLen = unpack('v', substr($rec, 32, 2))[1];
+        $dataPtr = unpack('V', substr($rec, 34, 4))[1];
+        if ($dataLen <= 0 || $dataPtr <= 0) return null;
+
+        $region = substr($buffer, $dataPtr, $dataLen);
+        return $region !== '' ? $region : null;
+    }
+
+    return null;
 }
 
 /**
@@ -108,15 +178,30 @@ function format_ip_region($region) {
 
 // 通过 IP 获取归属地
 function get_ip_region($ip) {
-        // 检查是否是 IPv6 地址
-    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-        return 'IPv6';
+    $ip = trim((string)$ip);
+    if ($ip === '') return '未知';
+
+    $packed = inet_pton($ip);
+    if ($packed !== false && strlen($packed) === 16) {
+        $v4Mapped = substr($packed, 0, 12) === "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff";
+        if (!$v4Mapped) {
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+                return '内网IP';
+            }
+            $region = ip2regionSearchV6($ip);
+            if ($region === null) return '未知';
+            return format_ip_region($region);
+        }
+        $ip = inet_ntop(substr($packed, 12, 4));
     }
-        // 检查是否是内网IP
+
+    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false) {
+        return '未知';
+    }
     if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
         return '内网IP';
     }
-    
+
     $searcher = getIp2regionSearcher();
     if (!$searcher) return '未知';
     $region = $searcher->search($ip);
