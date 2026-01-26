@@ -28,9 +28,7 @@
 	            }
 	            try {
 	                ensureDefaultPolicy(window);
-	
-	                // Ensure same-origin iframes (e.g. html2canvas) also have a default policy
-	                // so document.write/innerHTML sinks won't be blocked by require-trusted-types-for.
+
 	                var origAppendChild = Node.prototype.appendChild;
 	                Node.prototype.appendChild = function (child) {
 	                    var ret = origAppendChild.call(this, child);
@@ -95,10 +93,14 @@
         <header id="header" class="animated fadeInDown blur">
             <div class="navbar navbar-dark shadow-sm">
                 <div class="container"> 
-                    <?php if($this->options->logoUrl): ?>
+                    <?php
+                        $logoUrl = trim((string)($this->options->logoUrl ?? ''));
+                        $useLogo = !empty($this->options->uselogo) && $logoUrl !== '';
+                    ?>
+                    <?php if ($useLogo): ?>
                     <a href="<?php $this->options->siteUrl(); ?>" id="logo" class="navbar-brand logo-loop-light">
-                        <img id="logo-light" alt="logo" class="w-100 " src="<?php $this->options->logoUrl() ?>"> 
-                        <img id="logo-dark" alt="logo" class="w-100 d-none" src="<?php $this->options->logoUrl() ?>"> 
+                        <img id="logo-light" alt="logo" class="w-100 " src="<?php echo htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8'); ?>"> 
+                        <img id="logo-dark" alt="logo" class="w-100 d-none" src="<?php echo htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8'); ?>"> 
                     </a>
                     <?php else: ?>
                     <a href="<?php $this->options->siteUrl(); ?>" id="logo" class="navbar-brand logo-loop-light"> 
@@ -303,4 +305,4 @@ if ($gonggao) {
 </div>
 </div>
 </div>
-<?php endif; ?>            
+<?php endif; ?>
