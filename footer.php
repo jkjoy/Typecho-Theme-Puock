@@ -85,14 +85,14 @@ if ($this->options->friendlink): ?>
     <script data-instant>
         var puock_metas = {
             "home": "<?php $this->options->siteUrl(); ?>",
-            "use_post_menu": true,
-            "is_single": false,
+            "use_post_menu": <?php echo $this->options->use_post_menu === '0' ? 'true' : 'false'; ?>,
+            "is_single": <?php echo $this->is('post') ? 'true' : 'false'; ?>,
             "is_pjax": true,
-            "main_lazy_img": true,
+            "main_lazy_img": <?php echo $this->options->main_lazy_img === '0' ? 'true' : 'false'; ?>,
             "link_blank_open": true,
             "mode_switch": true,
-            "off_img_viewer": false,
-            "off_code_highlighting": false
+            "off_img_viewer": <?php echo $this->options->off_img_viewer === '1' ? 'true' : 'false'; ?>,
+            "off_code_highlighting": <?php echo $this->options->off_code_highlighting === '1' ? 'true' : 'false'; ?>
         };
     </script>
     <script type="text/javascript" data-no-instant src="<?php $this->options->themeUrl('assets/js/libs.min.js'); ?>?ver=<?php echo get_theme_version(); ?>" id="puock-libs-js"></script>

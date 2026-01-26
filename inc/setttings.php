@@ -29,6 +29,18 @@ function themeConfig($form)
     $form->addInput($friendlink);
     $gonggao = new Typecho_Widget_Helper_Form_Element_Textarea('gonggao', NULL, NULL, _t('站点公告'), _t('<b style=color:red>使用格式: </b><b>标题|链接|图标</b><br>多条公告回车分隔.链接和图标可以为空.图标使用Font Awesome,如: fa-regular fa-bell'));
     $form->addInput($gonggao);
+    $off_img_viewer = new Typecho_Widget_Helper_Form_Element_Radio('off_img_viewer',
+    array('0'=> _t('开启'), '1'=> _t('关闭')),'0', _t('<span class="themeConfig"><h3>文章页设置</h3></span><div class="themeConfiginfo">文章页面的相关设置</div>图片灯箱效果'));
+    $form->addInput($off_img_viewer);
+    $off_code_highlighting = new Typecho_Widget_Helper_Form_Element_Radio('off_code_highlighting',
+    array('0'=> _t('开启'), '1'=> _t('关闭')),'0', _t('代码高亮显示'));
+    $form->addInput($off_code_highlighting);
+    $main_lazy_img = new Typecho_Widget_Helper_Form_Element_Radio('main_lazy_img',
+    array('0'=> _t('开启'), '1'=> _t('关闭')),'0', _t('文章图片懒加载'));
+    $form->addInput($main_lazy_img);
+    $use_post_menu = new Typecho_Widget_Helper_Form_Element_Radio('use_post_menu',
+    array('0'=> _t('开启'), '1'=> _t('关闭')),'1', _t('文章目录生成'), _t('选择开启则在文章页显示文章目录'));
+    $form->addInput($use_post_menu);
     $rewardAlipayQrUrl = new Typecho_Widget_Helper_Form_Element_Text(
         'rewardAlipayQrUrl',
         NULL,

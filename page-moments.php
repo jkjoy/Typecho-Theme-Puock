@@ -17,10 +17,6 @@ $this->need('header.php');
 <div id="page-moments">
     <div class="row">
         <div id="post-main" class="col-lg-8 col-md-12<?php if ($this->options->showsidebar): ?> animated fadeInLeft<?php else:endif; ?>">
-           <div class="p-block">
-                <div><h1 class="mb-0 puock-text t-xxl"><?php $this->title() ?></h1></div>
-            </div>
-
             <?php
             $limit = 5;
             $visibility = 'PUBLIC';

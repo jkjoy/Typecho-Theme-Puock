@@ -16,11 +16,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 </div>   
 <div id="page-tags">
     <div id="page" class="row row-cols-1">
-        <?php if ($this->options->showsidebar): ?>  
-        <div id="posts" class="col-lg-8 col-md-12 animated fadeInLeft">
-        <?php else: ?>
-        <div id="posts" class="col-lg-12 col-md-12">
-        <?php endif; ?>
+        <div id="posts" class="col-lg-8 col-md-12 <?php if ($this->options->showsidebar): ?>animated fadeInLeft<?php else:endif; ?>">
             <div class="puock-text p-block no-style pb-2">
                 <?php
                 // 获取所有标签
