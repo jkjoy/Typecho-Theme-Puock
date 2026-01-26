@@ -1,3 +1,5 @@
 /tools
 /cache
 *.bak
+assets/.DS_Store
+.DS_Store
