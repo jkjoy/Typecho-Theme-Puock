@@ -80,10 +80,18 @@ function themeConfig($form)
         'sidebarHotPostsLimit',
         NULL,
         '',
-        _t('侧边栏热门文章数量'),
+        _t('侧边栏热评文章数量'),
         _t('不填写则默认显示 5 条')
     );
     $form->addInput($sidebarHotPostsLimit);
+    $sidebarHotViewsLimit = new Typecho_Widget_Helper_Form_Element_Text(
+        'sidebarHotViewsLimit',
+        NULL,
+        '',
+        _t('侧边栏热门文章数量'),
+        _t('不填写则默认显示 5 条')
+    );
+    $form->addInput($sidebarHotViewsLimit);
     $sidebarTagsLimit = new Typecho_Widget_Helper_Form_Element_Text(
         'sidebarTagsLimit',
         NULL,
@@ -98,11 +106,12 @@ function themeConfig($form)
             'ShowSearch'         => _t('显示搜索框'),
             'ShowAdmin'          => _t('显示作者信息'),
             'ShowRecentPosts'    => _t('显示最新文章'),
-            'ShowHotPosts'       => _t('显示热门文章'),
+            'ShowHotViews'       => _t('显示热门文章'),
+            'ShowHotPosts'       => _t('显示热评文章'),
             'ShowRecentComments' => _t('显示最近回复'),
             'ShowTags'           => _t('显示标签云')
         ],
-        ['ShowSearch', 'ShowAdmin', 'ShowRecentPosts', 'ShowHotPosts', 'ShowRecentComments', 'ShowTags'],
+        ['ShowSearch', 'ShowAdmin', 'ShowRecentPosts', 'ShowHotViews', 'ShowHotPosts', 'ShowRecentComments', 'ShowTags'],
         _t('侧边栏显示')
     );
     $form->addInput($sidebarBlock->multiMode());

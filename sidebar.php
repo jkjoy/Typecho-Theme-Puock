@@ -60,6 +60,79 @@
             </div>
         </div>
     <?php endif;
+    if (!empty($this->options->sidebarBlock) && in_array('ShowHotViews', $this->options->sidebarBlock)):
+    $hotViewsLimit = (int)($this->options->sidebarHotViewsLimit ?? 0);
+    if ($hotViewsLimit <= 0) {
+        $hotViewsLimit = 5;
+    }
+    $db = Typecho_Db::get();
+    $select = $db->select(
+        'table.contents.cid',
+        'table.contents.title',
+        'table.contents.slug',
+        'table.contents.created',
+        'table.contents.authorId',
+        'table.contents.type',
+        'table.contents.status',
+        'table.contents.views',
+        'table.contents.order',
+        'table.contents.template'
+    )
+    ->from('table.contents')
+    ->where('table.contents.type = ?', 'post')
+    ->where('table.contents.status = ?', 'publish')
+    ->where('table.contents.password IS NULL')
+    ->order('table.contents.views', Typecho_Db::SORT_DESC)
+    ->limit($hotViewsLimit);
+
+    try {
+        $hotViewPosts = $db->fetchAll($select);
+    } catch (Exception $e) {
+        $hotViewPosts = [];
+    }
+    if (!empty($hotViewPosts)): ?>
+    <!-- 热门文章 -->
+    <div class="pk-widget p-block">
+        <div> 
+            <span class="t-lg border-bottom border-primary puock-text pb-2">
+                <i class="fa-regular fa-eye"></i> 热门文章
+            </span> 
+        </div>
+        <div class="mt20">
+            <?php foreach ($hotViewPosts as $post):
+                // 更可靠的获取文章链接方式
+                $widget = Typecho_Widget::widget('Widget_Contents_Post_Recent');
+                $permalink = '';
+                try {
+                    // 方法1：使用Typecho的Router类
+                    $permalink = Typecho_Router::url('post', $post, $this->options->index);
+                    // 方法2：或者使用辅助函数（如果方法1不行）
+                    if (empty($permalink)) {
+                        $widget->push($post);
+                        $permalink = $widget->permalink;
+                        $widget->pop();
+                    }
+                    if (empty($post['title']) || empty($permalink)) {
+                        continue;
+                    }
+                } catch (Exception $e) {
+                    continue;
+                }
+                ?>
+                <div class="media-link mt20">
+                    <h2 class="t-lg t-line-1" title="<?php echo htmlspecialchars($post['title']); ?>"> 
+                        <i class="fa fa-angle-right t-sm c-sub mr-1"></i> 
+                        <a class="a-link t-w-400 t-md" 
+                           title="<?php echo htmlspecialchars($post['title']); ?>" 
+                           href="<?php echo htmlspecialchars($permalink); ?>">
+                            <?php echo htmlspecialchars($post['title']); ?>
+                        </a> 
+                    </h2>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif;endif;
     if (!empty($this->options->sidebarBlock) && in_array('ShowHotPosts', $this->options->sidebarBlock)):
     $hotPostsLimit = (int)($this->options->sidebarHotPostsLimit ?? 0);
     if ($hotPostsLimit <= 0) {
@@ -91,11 +164,11 @@
         $hotPosts = [];
     }
     if (!empty($hotPosts)): ?>
-    <!-- 热门文章 -->
+    <!-- 热评文章 -->
     <div class="pk-widget p-block">
         <div> 
             <span class="t-lg border-bottom border-primary puock-text pb-2">
-                <i class="fa-solid fa-fire"></i> 热门文章
+                <i class="fa-solid fa-fire"></i> 热评文章
             </span> 
         </div>
         <div class="mt20">
