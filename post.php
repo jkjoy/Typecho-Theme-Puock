@@ -9,7 +9,7 @@ $this->need('header.php');
 			    $pkPosterExcerpt = mb_substr($pkPosterExcerpt, 0, 60, 'UTF-8') . '...';
 			}
 				$pkLogoUrl = trim((string)($this->options->logoUrl ?? ''));
-				?>
+?>
 <div id="breadcrumb" class="animated fadeInUp">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -122,7 +122,7 @@ if($days > 180){
 		}
 
 		echo parse_shortcodes($content, $this);
-		?>
+?>
 </div>
 <div class="t-separator c-sub t-sm mt30">正文完</div>
 <div class="footer-info puock-text mt20">
@@ -147,7 +147,7 @@ if($days > 180){
 </div>
 </div>
 <!-- 分享海报点赞打赏 -->
-	<div class="mt15 post-action-panel">
+<div class="mt15 post-action-panel">
 	    <div class="post-action-content">
 		        <div class="d-flex justify-content-center w-100 c-sub">
 		            <div class="circle-button puock-bg text-center " id="post-like" data-id="<?php echo $this->cid; ?>"> 
