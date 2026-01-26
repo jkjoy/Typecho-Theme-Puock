@@ -4,7 +4,7 @@ function themeConfig($form)
 {   
     themeAutoUpgradeNotice();
     echo '<style>.typecho-page-title h2 {font-weight: 600;color: #737373;}.typecho-page-title h2:before {content: "#";margin-right: 6px;color: #ff6d6d; font-size: 20px;font-weight: 600;}.themeConfig h3 {color: #737373;font-size: 20px;}.themeConfig h3:before {content: "[";margin-right: 5px;color: #ff6d6d;font-size: 25px;}.themeConfig h3:after {content: "]";margin-left: 5px;color: #ff6d6d;font-size: 25px;}.themeConfiginfo{border: 1px solid #ffadad;padding: 20px;margin: -15px 10px 25px 0;background: #ffffff;border-radius: 5px;color: #ff6d6d;}</style>';
-    $logoUrl = new Typecho_Widget_Helper_Form_Element_Text('logoUrl', NULL, NULL, _t('<span class="themeConfig"><h3>博客设置</h3></span><div class="themeConfiginfo">全局设置</div>站点 LOGO 地址'), _t('建议尺寸 100px * 100px,不填写则使用站点标题'));
+    $logoUrl = new Typecho\Widget\Helper\Form\Element_Text('logoUrl', NULL, NULL, _t('<span class="themeConfig"><h3>博客设置</h3></span><div class="themeConfiginfo">全局设置</div>站点 LOGO 地址'), _t('建议尺寸 100px * 100px,不填写则使用站点标题'));
     $form->addInput($logoUrl);
     $icoUrl = new Typecho_Widget_Helper_Form_Element_Text('icoUrl', NULL, NULL, _t('站点 Favicon 地址'), _t('建议尺寸 16px * 16px,不填写则使用默认图标'));
     $form->addInput($icoUrl);
@@ -14,6 +14,8 @@ function themeConfig($form)
     $form->addInput($cnavatar);
     $sticky = new Typecho_Widget_Helper_Form_Element_Text('sticky', NULL, NULL, _t('<span class="themeConfig"><h3>文章推荐</h3></span><div class="themeConfiginfo">填入文章的cid,多个cid以`|`符号隔开</div>置顶文章'), _t('支持多个置顶文章,如: 1|2|3. 填写文章的cid,不填写则不置顶'));
     $form->addInput($sticky);
+    $slide = new Typecho_Widget_Helper_Form_Element_Text('slide', NULL, NULL, _t('轮播图设置'), _t('填入文章的cid,多个cid以`|`符号隔开.如: 1|2|3. 填写文章的cid,不填写则不显示轮播图'));
+    $form->addInput($slide);
     $listmodel = new Typecho_Widget_Helper_Form_Element_Radio('listmodel',
     array('0'=> _t('卡片模式'), '1'=> _t('列表模式')),'0', _t('<span class="themeConfig"><h3>个性化设置</h3></span><div class="themeConfiginfo">根据需求设置,部分功能需要搭配插件使用</div>列表模式'));
     $form->addInput($listmodel);
@@ -45,7 +47,7 @@ function themeConfig($form)
         'rewardAlipayQrUrl',
         NULL,
         NULL,
-        _t('<span class="themeConfig"><h3>赞赏设置</h3></span><div class="themeConfiginfo">用于文章页赞赏弹窗</div>支付宝赞赏二维码'),
+        _t('支付宝赞赏二维码'),
         _t('填写二维码图片地址（不填则不显示）')
     );
     $form->addInput($rewardAlipayQrUrl);
@@ -57,15 +59,15 @@ function themeConfig($form)
         _t('填写二维码图片地址（不填则不显示）')
     );
     $form->addInput($rewardWxQrUrl);
-    $adlisttop = new Typecho_Widget_Helper_Form_Element_Textarea('adlisttop', NULL, NULL, _t('<span class="themeConfig"><h3>广告管理</h3></span><div class="themeConfiginfo">广告位设置</div>文章列表上方广告位'), _t('支持HTML'));
+    $adlisttop = new Typecho_Widget_Helper_Form_Element_Textarea('adlisttop', NULL, NULL, _t('<span class="themeConfig"><h3>广告管理</h3></span><div class="themeConfiginfo">广告位设置</div>全站公告上方广告位'), _t('支持HTML'));
     $form->addInput($adlisttop);
-    $adlistfoot = new Typecho_Widget_Helper_Form_Element_Textarea('adlistfoot', NULL, NULL, _t('文章列表下方广告位'), _t('支持HTML'));
+    $adlistfoot = new Typecho_Widget_Helper_Form_Element_Textarea('adlistfoot', NULL, NULL, _t('全站页脚广告位'), _t('支持HTML'));
     $form->addInput($adlistfoot);
-    $articletop = new Typecho_Widget_Helper_Form_Element_Textarea('articletop', NULL, NULL, _t('文章页顶部广告位'), _t('支持HTML'));
+    $articletop = new Typecho_Widget_Helper_Form_Element_Textarea('articletop', NULL, NULL, _t('文章页面标题上方广告位'), _t('支持HTML'));
     $form->addInput($articletop);
-    $articlemid = new Typecho_Widget_Helper_Form_Element_Textarea('articlemid', NULL, NULL, _t('文章页中部广告位'), _t('支持HTML'));
+    $articlemid = new Typecho_Widget_Helper_Form_Element_Textarea('articlemid', NULL, NULL, _t('文章内容下方广告位'), _t('支持HTML'));
     $form->addInput($articlemid);
-    $articlefoot = new Typecho_Widget_Helper_Form_Element_Textarea('articlefoot', NULL, NULL, _t('文章页底部广告位'), _t('支持HTML'));
+    $articlefoot = new Typecho_Widget_Helper_Form_Element_Textarea('articlefoot', NULL, NULL, _t('文章页面评论下方广告位'), _t('支持HTML'));
     $form->addInput($articlefoot);
     $addhead = new Typecho_Widget_Helper_Form_Element_Textarea('addhead', NULL, NULL, _t('<span class="themeConfig"><h3>网站验证</h3></span><div class="themeConfiginfo">若开启无刷新加载，请在标签上加上data-instant属性</div>网站验证代码'), _t('支持html代码'));
     $form->addInput($addhead);
@@ -91,7 +93,7 @@ function themeConfig($form)
     $sidebarHotPostsLimit = new Typecho_Widget_Helper_Form_Element_Text(
         'sidebarHotPostsLimit',
         NULL,
-        '',
+        '5',
         _t('侧边栏热评文章数量'),
         _t('不填写则默认显示 5 条')
     );
@@ -99,7 +101,7 @@ function themeConfig($form)
     $sidebarHotViewsLimit = new Typecho_Widget_Helper_Form_Element_Text(
         'sidebarHotViewsLimit',
         NULL,
-        '',
+        '5',
         _t('侧边栏热门文章数量'),
         _t('不填写则默认显示 5 条')
     );
@@ -107,7 +109,7 @@ function themeConfig($form)
     $sidebarTagsLimit = new Typecho_Widget_Helper_Form_Element_Text(
         'sidebarTagsLimit',
         NULL,
-        '',
+        '50',
         _t('侧边栏热门标签数量'),
         _t('不填写则默认显示 50 条')
     );

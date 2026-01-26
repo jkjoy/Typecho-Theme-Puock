@@ -16,11 +16,11 @@ $this->need('sticky.php');
 <div class="row row-cols-1">
 <?php if ($this->options->showsidebar): ?>    
 <div class="col-lg-8 col-md-12 animated fadeInLeft ">
-<div class="animated fadeInLeft ">
+<div class="animated fadeInLeft">
 <?php else: ?>
 <div class="col-lg-12 col-md-12">
 <div class="row box-plr15">
-<?php endif; ?>
+<?php endif; $this->need('slide.php');?>
 <div> <!--文章列表-->
 <div id="posts">
 <?php if ($this->options->listmodel): ?>
