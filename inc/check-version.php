@@ -103,8 +103,8 @@ function themeAutoUpgradeNotice()
         $notice_html = '
         <span class="themeConfig"><h3>主题更新</h3>
             <div class="info">发现新版本 ' . $latest_version . '，您当前使用的是 ' . $current_version . '。建议立即更新以获得最新功能和安全性修复。
-                <a href="https://github.com/jkjoy/typecho-theme-farallon/releases/latest" target="_blank">查看更新</a>
-                <a href="https://github.com/jkjoy/typecho-theme-farallon/releases" target="_blank">立即下载</a>
+                <a href="https://github.com/jkjoy/typecho-theme-puock/releases/latest" target="_blank">查看更新</a>
+                <a href="https://github.com/jkjoy/typecho-theme-puock/releases" target="_blank">立即下载</a>
             </div>';
         echo $notice_html;
     }
