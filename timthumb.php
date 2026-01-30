@@ -271,9 +271,13 @@ class timthumb
             return false;
         }
         if ($this->isURL) {
+            $allowAllExternal = ALLOW_ALL_EXTERNAL_SITES;
+            if (defined('PUOCK_TIMTHUMB_ALLOW_ALL_EXTERNAL') && PUOCK_TIMTHUMB_ALLOW_ALL_EXTERNAL) {
+                $allowAllExternal = true;
+            }
             if ($this->puockIsSignedExternalRequest()) {
                 $this->debug(2, "External URL is allowed by Puock signed request.");
-            } elseif (ALLOW_ALL_EXTERNAL_SITES) {
+            } elseif ($allowAllExternal) {
                 $this->debug(2, "Fetching from all external sites is enabled.");
             } else {
                 $this->debug(2, "Fetching only from selected external sites is enabled.");

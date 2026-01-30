@@ -52,11 +52,10 @@
                     <div>
 	                        <?php if($this->is('post')): ?>
 	                        <button id="comment-cancel" type="button" class="btn btn-outline-dark d-none btn-ssm">取消</button>
-	                        <?php endif;if($this->options->social): ?>
+	                        <?php endif; ?>
 	                        <button id="comment-smiley" class="btn btn-outline-secondary btn-ssm pk-smiley-open" type="button" title="表情" aria-label="表情">
 	                            <i class="fa-regular fa-face-smile t-md"></i>
 	                        </button>
-	                        <?php endif; ?>
                         <input type="hidden" name="parent" id="comment_parent" value="">
                         <?php Typecho_Widget::widget('Widget_Security')->to($security); ?>
                         <input type="hidden" name="_" value="<?php echo $security->getToken($this->request->getRequestUrl()); ?>">
@@ -68,7 +67,6 @@
             </form>
 	        </div>
 	    </div>
-	    <?php if ($this->options->social): ?>
 	    <template id="pk-smiley-template">
 	        <?php
 	        $pkSmileys = [
@@ -117,7 +115,6 @@
 	            <?php endforeach; ?>
 	        </div>
 	    </template>
-	    <?php endif; ?>
 	    <div id="comment-ajax-load" class="text-center mt20 d-none">
 	        <div class="pk-skeleton _comment">
 	            <div class="_h">

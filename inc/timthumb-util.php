@@ -3,7 +3,8 @@
 function puock_timthumb_cache_dir(): string
 {
     $themeDir = dirname(__DIR__);
-    $dir = $themeDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'thumbnail';
+    $usrDir = dirname(dirname($themeDir));
+    $dir = $usrDir . DIRECTORY_SEPARATOR . 'cache';
     if (!is_dir($dir)) {
         @mkdir($dir, 0755, true);
     }
