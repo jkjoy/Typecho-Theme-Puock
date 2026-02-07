@@ -307,12 +307,32 @@ class Puock {
     pageLinkBlankOpenInit() {
         if (this.data.params.link_blank_open) {
             $(".entry-content").find("a").each((_, item) => {
+                const target = (item.getAttribute('target') || '').trim().toLowerCase();
+                if (item.hasAttribute('data-no-blank') || target === '_self' || target === 'self') {
+                    return;
+                }
+                const href = (item.getAttribute('href') || '').trim();
+                if (!href || href.startsWith('#') || /^(?:javascript:|mailto:|tel:)/i.test(href)) {
+                    return;
+                }
+                let parsedUrl;
+                try {
+                    parsedUrl = new URL(href, window.location.href);
+                } catch (e) {
+                    return;
+                }
+                const protocol = (parsedUrl.protocol || '').toLowerCase();
+                if (protocol !== 'http:' && protocol !== 'https:') {
+                    return;
+                }
+                if (parsedUrl.host === window.location.host) {
+                    return;
+                }
                 if (item && item.querySelector && item.querySelector("img")) {
-                    const href = (item.getAttribute('href') || '').trim();
                     const isImageHref = /(\.(?:avif|bmp|gif|jpe?g|png|svg|webp))(?:[?#].*)?$/i.test(href) || /^(?:data|blob):/i.test(href);
                     if (isImageHref) return;
                 }
-                $(item).attr('target', 'blank')
+                $(item).attr('target', '_blank')
             })
         }
     }

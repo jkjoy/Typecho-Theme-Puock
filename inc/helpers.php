@@ -81,6 +81,8 @@ function friendly_date($timestamp) {
  */
 function themeInit($archive)
 {
+    puock_sync_go_route();
+
     // 站外链接跳转提醒
     // - /go/<token>
     // - /index.php/go/<token>
@@ -149,29 +151,90 @@ function puock_go_decode_url($token)
     return puock_go_base64url_decode((string)$token);
 }
 
+function puock_sync_go_route()
+{
+    $routeName = 'puock_go';
+    $routeUrl = '/go/[token:alpha]';
+    $routeWidget = 'Widget_Archive';
+    $routeAction = 'render';
+
+    try {
+        $routingTable = Helper::options()->routingTable;
+        $route = (is_array($routingTable) && isset($routingTable[$routeName]) && is_array($routingTable[$routeName]))
+            ? $routingTable[$routeName]
+            : null;
+        $matched = is_array($route)
+            && (string)($route['url'] ?? '') === $routeUrl
+            && (string)($route['widget'] ?? '') === $routeWidget
+            && (string)($route['action'] ?? '') === $routeAction;
+
+        if ($matched) {
+            return;
+        }
+
+        if (is_array($route)) {
+            Helper::removeRoute($routeName);
+        }
+        Helper::addRoute($routeName, $routeUrl, $routeWidget, $routeAction, 'index');
+    } catch (Throwable $e) {
+    }
+}
+
+function puock_go_link_mode()
+{
+    $mode = strtolower(trim((string)Helper::options()->go_link_mode));
+    return in_array($mode, ['path', 'query'], true) ? $mode : 'path';
+}
+
+function puock_go_route_available()
+{
+    if (!class_exists('Typecho\\Router')) {
+        return false;
+    }
+    try {
+        return Typecho\Router::get('puock_go') !== null;
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
 function puock_go_page_base_url()
 {
-    static $cached = null;
-    if (is_string($cached)) {
-        return $cached;
-    }
-    if (function_exists('get_correct_url')) {
-        $cached = (string)get_correct_url('/go/');
-        return $cached;
+    static $cached = [];
+
+    $mode = puock_go_link_mode();
+    if (isset($cached[$mode])) {
+        return $cached[$mode];
     }
 
     $siteUrl = (string)Helper::options()->siteUrl;
     $siteUrl = $siteUrl !== '' ? rtrim($siteUrl, '/') . '/' : '/';
-    $cached = $siteUrl . 'go/';
-    return $cached;
+
+    if ($mode === 'path' && puock_go_route_available()) {
+        if (function_exists('get_correct_url')) {
+            $cached[$mode] = (string)get_correct_url('/go/');
+        } else {
+            $cached[$mode] = $siteUrl . 'go/';
+        }
+        return $cached[$mode];
+    }
+
+    $cached[$mode] = $siteUrl . 'index.php';
+    return $cached[$mode];
 }
 
 function puock_go_build_url($targetUrl)
 {
     $base = puock_go_page_base_url();
     $token = puock_go_encode_url((string)$targetUrl);
-    $base = rtrim((string)$base, '/') . '/';
-    return $base . rawurlencode($token);
+
+    if (puock_go_link_mode() === 'path' && puock_go_route_available()) {
+        $base = rtrim((string)$base, '/') . '/';
+        return $base . rawurlencode($token);
+    }
+
+    $joiner = str_contains((string)$base, '?') ? '&' : '?';
+    return (string)$base . $joiner . 'goto=' . rawurlencode($token);
 }
 
 function puock_normalize_host($host)
@@ -295,6 +358,7 @@ function puock_handle_goto_request($archive, $tokenFromPath = null)
 
     $targetUrl = trim((string)$targetUrl);
     $targetUrl = preg_replace('/[\\x00-\\x1F\\x7F]+/u', '', $targetUrl);
+    $showFullUrl = ((string)Helper::options()->go_show_full_url) !== '1';
 
     $isValid = false;
     $targetHost = '';
@@ -355,10 +419,14 @@ function puock_handle_goto_request($archive, $tokenFromPath = null)
                                 </span>
                             </div>
                             <p class="t-sm c-sub mt10">目标站点：<?php echo htmlspecialchars($targetHost ?: $targetUrl, ENT_QUOTES, 'UTF-8'); ?></p>
-                            <p class="t-sm c-sub mt10" style="word-break: break-all;">完整地址：<?php echo htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8'); ?></p>
+                            <?php if ($showFullUrl): ?>
+                                <p class="t-sm c-sub mt10" style="word-break: break-all;">完整地址：<?php echo htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8'); ?></p>
+                            <?php endif; ?>
                             <div class="mt20">
                                 <a class="btn btn-primary btn-ssm"
                                    href="<?php echo htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                                   target="_self"
+                                   data-no-blank="1"
                                    rel="noopener noreferrer nofollow">继续访问</a>
                                 <a class="btn btn-outline-secondary btn-ssm ml-1"
                                    href="<?php echo htmlspecialchars($backUrl, ENT_QUOTES, 'UTF-8'); ?>"
@@ -372,4 +440,9 @@ function puock_handle_goto_request($archive, $tokenFromPath = null)
     </div>
     <?php
     $archive->need('footer.php');
+}
+
+function themeConfigHandle($settings, $isInit)
+{
+    puock_sync_go_route();
 }

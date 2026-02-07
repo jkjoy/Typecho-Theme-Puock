@@ -46,6 +46,14 @@ function themeConfig($form)
     $use_post_menu = new Typecho_Widget_Helper_Form_Element_Radio('use_post_menu',
     array('0'=> _t('开启'), '1'=> _t('关闭')),'1', _t('文章目录生成'), _t('选择开启则在文章页显示文章目录'));
     $form->addInput($use_post_menu);
+    $go_link_mode = new Typecho_Widget_Helper_Form_Element_Radio(
+    'go_link_mode',
+    array('path'=> _t('/go/短链接'), 'query'=> _t('/?goto 参数')),'path', _t('站外跳转链接格式'), _t('推荐使用 /go/ 短链接；如环境不支持该路由，可切换为 ?goto 参数'));
+    $form->addInput($go_link_mode);
+    $go_show_full_url = new Typecho_Widget_Helper_Form_Element_Radio(
+    'go_show_full_url',
+    array('0'=> _t('显示'), '1'=> _t('隐藏')),'0', _t('跳转页显示完整目标 URL'), _t('仅控制提示页中文本展示，不影响实际跳转地址'));
+    $form->addInput($go_show_full_url);
     $rewardAlipayQrUrl = new Typecho_Widget_Helper_Form_Element_Text(
         'rewardAlipayQrUrl',
         NULL,

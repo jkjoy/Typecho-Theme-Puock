@@ -1,11 +1,11 @@
 <?php
 /**
- * Puock theme for Typecho
- * 老孙移植
- * 
- * @package Typecho Puock Theme
+ *  一款功能齐全的简洁优雅的 Typecho 主题
+ *  部分功能需要配合插件使用，详情请查看主题文档
+ * 主题文档：https://www.imsun.org/puock-docs/
+ * @package  Puock  
  * @author 老孙博客
- * @version 1.5.1
+ * @version 1.5.2
  * @link http://www.imsun.org
  */
 
