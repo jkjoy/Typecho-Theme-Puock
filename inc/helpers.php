@@ -444,5 +444,18 @@ function puock_handle_goto_request($archive, $tokenFromPath = null)
 
 function themeConfigHandle($settings, $isInit)
 {
+    $db = Typecho_Db::get();
+    $theme = trim((string)Helper::options()->theme);
+    if ($theme !== '') {
+        $name = 'theme:' . $theme;
+        $value = serialize((array)$settings);
+        $exists = $db->fetchRow($db->select('name')->from('table.options')->where('name = ?', $name)->limit(1));
+        if ($exists) {
+            $db->query($db->update('table.options')->rows(['value' => $value])->where('name = ?', $name));
+        } else {
+            $db->query($db->insert('table.options')->rows(['name' => $name, 'value' => $value, 'user' => 0]));
+        }
+    }
+
     puock_sync_go_route();
 }
